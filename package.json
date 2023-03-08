@@ -20,6 +20,7 @@
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",
     "fs": "*",
+    "husky": "^8.0.3",
     "lint": "^0.8.19",
     "prettier": "^2.8.4",
     "use-keyboard-shortcut": "^1.1.6"
@@ -38,7 +39,6 @@
     "electron-builder": "^23.6.0",
     "eslint": "^8.35.0",
     "eslint-plugin-react": "^7.32.2",
-    "husky": "^8.0.3",
     "lint-staged": "^13.1.2",
     "next": "^12.3.4",
     "nextron": "^8.5.0",
