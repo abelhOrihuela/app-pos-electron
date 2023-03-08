@@ -19,7 +19,7 @@ function DashboardAdmin({ children }) {
     setOpen(!open);
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     setSearch(e.target.value);
   };
 

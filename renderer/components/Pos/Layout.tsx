@@ -11,8 +11,8 @@ import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import Login from './../Login'
-import { AppContext } from "../../context/AuthProvider"
+import Login from "./../Login";
+import { AppContext } from "../../context/AuthProvider";
 import { AppContextType } from "../../context/Types";
 
 function Copyright(props: any) {
@@ -85,14 +85,8 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-
-
 function Layout(props: any) {
-
-    const { user } = React.useContext(AppContext) as AppContextType;
-
-
-
+  const { user } = React.useContext(AppContext) as AppContextType;
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -135,9 +129,7 @@ function Layout(props: any) {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {
-                user ? props.children : <Login />
-            }
+            {user ? props.children : <Login />}
             <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>

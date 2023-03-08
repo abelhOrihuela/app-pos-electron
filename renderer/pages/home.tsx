@@ -7,7 +7,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Paper
+  Paper,
 } from "@mui/material";
 import ListItems from "../components/ListItems";
 import Resume from "../components/Resume";
@@ -20,15 +20,15 @@ function DashboardContent() {
 
   const { flushHeldKeys } = useKeyboardShortcut(
     ["Control", "P"],
-    shortcutKeys => alert("Shift + H has been pressed."),
+    (shortcutKeys) => alert("Shift + H has been pressed."),
     {
       overrideSystem: true,
       ignoreInputFields: false,
-      repeatOnHold: false
+      repeatOnHold: false,
     }
   );
 
-  const onChange = e => {
+  const onChange = (e) => {
     setSearch(e.target.value);
   };
 
@@ -51,8 +51,8 @@ function DashboardContent() {
     const itemsCopy = [...items];
 
     fetch("http://localhost:3000/search?q=" + search)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data != null) {
           if (data.length > 1) {
             //
@@ -75,7 +75,7 @@ function DashboardContent() {
           alert("No results");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -89,7 +89,7 @@ function DashboardContent() {
             sx={{
               p: 2,
               display: "flex",
-              flexDirection: "column"
+              flexDirection: "column",
             }}
           >
             <form onSubmit={handleSubmit}>
@@ -127,7 +127,7 @@ function DashboardContent() {
             sx={{
               p: 2,
               display: "flex",
-              flexDirection: "column"
+              flexDirection: "column",
               // height: 240,
             }}
           >

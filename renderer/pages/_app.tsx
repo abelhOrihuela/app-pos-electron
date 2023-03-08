@@ -7,7 +7,7 @@ import type { EmotionCache } from "@emotion/cache";
 import createEmotionCache from "../lib/create-emotion-cache";
 import { CacheProvider } from "@emotion/react";
 
-import  AppProvider  from "../context/AuthProvider";
+import AppProvider from "../context/AuthProvider";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -16,7 +16,6 @@ type MyAppProps = AppProps & {
 };
 
 export default function MyApp(props: MyAppProps) {
-
   const { Component, pageProps, emotionCache = clientSideEmotionCache } = props;
 
   return (
@@ -27,13 +26,12 @@ export default function MyApp(props: MyAppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-    <AppProvider>
-<ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <AppProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
       </AppProvider>
-      
     </CacheProvider>
   );
 }

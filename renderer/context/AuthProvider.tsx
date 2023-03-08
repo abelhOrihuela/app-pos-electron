@@ -1,29 +1,26 @@
-import * as React from 'react';
-import { AppContextType, IUser } from './Types';
+import * as React from "react";
+import { AppContextType, IUser } from "./Types";
 
 export const AppContext = React.createContext<AppContextType | null>(null);
 
 const AppProvider = ({ children }) => {
+  // global state
+  const [currentUser, setCurrentUser] = React.useState<IUser>();
 
-// global state
-const [currentUser, setCurrentUser] = React.useState<IUser>()
+  // handlers context
+  const setUserData = (user: IUser) => {
+    setCurrentUser(user);
+  };
 
-// handlers context
-const setUserData = (user: IUser) => {
-    setCurrentUser(user)
-}
-
-return (
+  return (
     <AppContext.Provider value={{ user: currentUser, setUserData }}>
       {children}
     </AppContext.Provider>
   );
-
-}
-
+};
 
 AppProvider.propTypes = {
-    children: React.Component
-}
+  children: React.Component,
+};
 
 export default AppProvider;
