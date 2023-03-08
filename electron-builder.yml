@@ -1,0 +1,12 @@
+appId: com.pos.blazepixel
+productName: Punto de venta
+copyright: Copyright © 2023
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
