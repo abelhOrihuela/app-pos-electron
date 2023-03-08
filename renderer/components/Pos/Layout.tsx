@@ -15,13 +15,13 @@ import Login from "./../Login";
 import { AppContext } from "./../../context/AuthProvider";
 import { AppContextType } from "./../../context/Types";
 
-function Copyright(props: any) {
+function Copyright() {
   return (
     <Typography
       variant="body2"
       color="text.secondary"
       align="center"
-      {...props}
+      sx={{ pt: 4 }}
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
@@ -86,7 +86,7 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 function Layout(props: any) {
-  const { user } = React.useContext(AppContext) as AppContextType;
+  const { user, isLoading } = React.useContext(AppContext) as AppContextType;
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -129,8 +129,8 @@ function Layout(props: any) {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {user ? props.children : <Login />}
-            <Copyright sx={{ pt: 4 }} />
+            {isLoading ? <p>Loading</p> : user ? props.children : <Login />}
+            <Copyright />
           </Container>
         </Box>
       </Box>
