@@ -12,8 +12,8 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Login from "./../Login";
-import { AppContext } from "../../context/AuthProvider";
-import { AppContextType } from "../../context/Types";
+import { AppContext } from "./../../context/AuthProvider";
+import { AppContextType } from "./../../context/Types";
 
 function Copyright(props: any) {
   return (

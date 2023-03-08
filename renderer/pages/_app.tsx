@@ -7,7 +7,7 @@ import type { EmotionCache } from "@emotion/cache";
 import createEmotionCache from "../lib/create-emotion-cache";
 import { CacheProvider } from "@emotion/react";
 
-import AppProvider from "../context/AuthProvider";
+import AppProvider from "./../context/AuthProvider";
 
 const clientSideEmotionCache = createEmotionCache();
 

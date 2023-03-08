@@ -8,8 +8,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { AppContext } from "../context/AuthProvider";
-import { AppContextType, IUser } from "../context/Types";
+import { AppContext } from "./../context/AuthProvider";
+import { AppContextType, IUser } from "./../context/Types";
 
 const theme = createTheme();
 
@@ -20,7 +20,6 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setUserData({ username: "Abel" } as IUser);
-
   };
 
   return (
@@ -57,17 +56,17 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-                <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                />
-           
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+
             <Button
               type="submit"
               fullWidth
