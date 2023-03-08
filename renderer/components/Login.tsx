@@ -21,14 +21,6 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget);
     setUserData({ username: "Abel" } as IUser);
 
-    // context.handleDispatch({
-    //     type: "AUTH_USER",
-    //     payload: {
-    //       user: data,
-    //       isAuthenticated: true,
-    //       isLoading: false,
-    //     },
-    //   });
   };
 
   return (
@@ -65,20 +57,17 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
+                    <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    />
+           
             <Button
               type="submit"
               fullWidth
