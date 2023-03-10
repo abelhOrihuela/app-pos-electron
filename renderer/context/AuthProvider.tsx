@@ -7,11 +7,13 @@ const AppProvider = ({ children }) => {
   // global state
   const [currentUser, setCurrentUser] = React.useState<IUser>();
   const [isLoading, setIsLoading] = React.useState(true);
+  const [token, setToken] = React.useState("");
+  const [error, setError] = React.useState("");
 
   // handlers context
   const setUserData = (user: IUser) => {
-    setDataLocalStorage("user", user);
-    setDataLocalStorage("isAuthenticated", true);
+    setDataLocalStorage("user", user, true);
+    setDataLocalStorage("isAuthenticated", true, true);
     setCurrentUser(user);
   };
 
@@ -19,6 +21,25 @@ const AppProvider = ({ children }) => {
     setIsLoading(loading);
   };
 
+  const setAccessToken = (token: string) => {
+    setDataLocalStorage("access_token", token, false);
+
+    setToken(token);
+  };
+
+  const closeSession = () => {
+    window.localStorage.removeItem("user");
+    window.localStorage.removeItem("isAuthenticated");
+    window.localStorage.removeItem("access_token");
+    setToken("");
+    setCurrentUser(null);
+  };
+
+  const setGeneralError = (error: string) => {
+    setError(error);
+  };
+
+  // validate session
   useEffect(() => {
     const sessionExists = getDataLocalStorage("isAuthenticated");
     const user = getDataLocalStorage("user");
@@ -29,8 +50,8 @@ const AppProvider = ({ children }) => {
     }
   }, []);
 
-  const setDataLocalStorage = (key: string, value: any) => {
-    window.localStorage.setItem(key, JSON.stringify(value));
+  const setDataLocalStorage = (key: string, value: any, stringify: boolean) => {
+    window.localStorage.setItem(key, stringify ? JSON.stringify(value) : value);
   };
 
   const getDataLocalStorage = (key: string) => {
@@ -48,6 +69,11 @@ const AppProvider = ({ children }) => {
         setUserData,
         isLoading,
         setLoading,
+        token,
+        setAccessToken,
+        closeSession,
+        error,
+        setGeneralError,
       }}
     >
       {children}

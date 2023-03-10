@@ -12,7 +12,6 @@ import {
 import ListItems from "../components/ListItems";
 import Resume from "../components/Resume";
 import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
-
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
   const [search, setSearch] = React.useState("");

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,17 +9,30 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AppContext } from "./../context/AuthProvider";
-import { AppContextType, IUser } from "./../context/Types";
+import { AppContextType, IUser, ResponseLogin } from "./../context/Types";
+import api from "./../lib/api";
+import { AxiosResponse } from "axios";
 
 const theme = createTheme();
 
 export default function SignIn() {
-  const { setUserData } = React.useContext(AppContext) as AppContextType;
+  const { setAccessToken, setUserData, setGeneralError } = useContext(
+    AppContext
+  ) as AppContextType;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    setUserData({ username: "Abel" } as IUser);
+
+    try {
+      const {
+        data: { access_token },
+      }: AxiosResponse<ResponseLogin> = await api.post("/public/login", data);
+      setAccessToken(access_token);
+      setUserData({ username: "Abel" } as IUser);
+    } catch (error) {
+      setGeneralError(error.message);
+    }
   };
 
   return (

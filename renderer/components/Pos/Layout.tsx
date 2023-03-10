@@ -14,6 +14,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import Login from "./../Login";
 import { AppContext } from "./../../context/AuthProvider";
 import { AppContextType } from "./../../context/Types";
+import { Alert, Button, Snackbar } from "@mui/material";
 
 function Copyright() {
   return (
@@ -86,7 +87,29 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 function Layout(props: any) {
-  const { user, isLoading } = React.useContext(AppContext) as AppContextType;
+  const { user, closeSession, error, setGeneralError } = React.useContext(
+    AppContext
+  ) as AppContextType;
+  const [open, setOpen] = React.useState(false);
+
+  const handleCloseSession = () => {
+    closeSession();
+  };
+
+  const handleClick = () => {
+    setGeneralError("");
+  };
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setGeneralError("");
+  };
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -107,7 +130,7 @@ function Layout(props: any) {
             >
               Tienda
             </Typography>
-            <IconButton color="inherit">
+            <IconButton color="inherit" onClick={handleCloseSession}>
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
@@ -129,9 +152,26 @@ function Layout(props: any) {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {isLoading ? <p>Loading</p> : user ? props.children : <Login />}
+            {user ? props.children : <Login />}
+
             <Copyright />
           </Container>
+
+          <Snackbar
+            open={error != ""}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          >
+            <Alert
+              onClose={handleClose}
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {error}
+            </Alert>
+          </Snackbar>
         </Box>
       </Box>
     </ThemeProvider>
