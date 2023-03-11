@@ -1,5 +1,5 @@
-import * as React from "react";
-import Layout from "./../components/Pos/Layout";
+import React, { useContext, useState } from "react";
+import Layout from "../components/Pos/Layout";
 import {
   FormControl,
   Grid,
@@ -11,11 +11,23 @@ import {
 } from "@mui/material";
 import ListItems from "../components/ListItems";
 import Resume from "../components/Resume";
-import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
+import useKeyboardShortcut from "use-keyboard-shortcut";
+
+import { IProduct } from "../context/Types";
+import api from "../lib/api";
+import { AppContext } from "../context/AuthProvider";
+import SimpleDialog from "../components/Pos/Dialog";
+import { AxiosResponse } from "axios";
+
 function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
-  const [search, setSearch] = React.useState("");
-  const [items, setItems] = React.useState([]);
+  const { setGeneralError } = useContext(AppContext);
+
+  const [search, setSearch] = useState("");
+  const [items, setItems] = useState([]);
+  const [itemsSearch, setItemsSearch] = useState([]);
+
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<IProduct>();
 
   const { flushHeldKeys } = useKeyboardShortcut(
     ["Control", "P"],
@@ -45,38 +57,57 @@ function DashboardContent() {
     }, 100);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     const itemsCopy = [...items];
 
-    fetch("http://localhost:3000/search?q=" + search)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data != null) {
-          if (data.length > 1) {
-            //
-          } else {
-            itemsCopy.push(data[0]);
-            setItems(itemsCopy);
+    event.preventDefault();
 
-            setTimeout(() => {
-              const lastElemnt = document.querySelector(
-                "table > tbody > tr:nth-child(" + itemsCopy.length + ")"
-              );
-              if (lastElemnt?.scrollIntoView) {
-                lastElemnt.scrollIntoView();
-              }
-            }, 100);
-          }
-
-          setSearch("");
+    try {
+      const { data }: AxiosResponse<IProduct[]> = await api.get(
+        "/pos/search?q=" + search
+      );
+      if (data != null) {
+        if (data.length > 1) {
+          setItemsSearch(data);
+          setOpen(true);
         } else {
-          alert("No results");
+          itemsCopy.push(data[0]);
+          setItems(itemsCopy);
+
+          setTimeout(() => {
+            scrollToBottom(items.length);
+          }, 100);
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+        setSearch("");
+      } else {
+        alert("No results");
+      }
+    } catch (error) {
+      setGeneralError(error.message);
+    }
+  };
+
+  const handleClose = (value: IProduct) => {
+    const itemsCopy = [...items];
+
+    setOpen(false);
+    setSelectedValue(value);
+
+    itemsCopy.push(value);
+    setItems(itemsCopy);
+    setTimeout(() => {
+      scrollToBottom(items.length);
+    }, 100);
+  };
+
+  const scrollToBottom = (size: number) => {
+    const lastElemnt = document.querySelector(
+      "table > tbody > tr:nth-child(" + size + ")"
+    );
+    if (lastElemnt?.scrollIntoView) {
+      lastElemnt.scrollIntoView();
+    }
   };
 
   return (
@@ -116,6 +147,13 @@ function DashboardContent() {
           </Paper>
         </Grid>
 
+        <SimpleDialog
+          items={itemsSearch}
+          selectedValue={selectedValue}
+          open={open}
+          onClose={handleClose}
+        />
+
         <Grid item xs={12} md={8} lg={9}>
           <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
             <ListItems items={items} removeItem={removeItem} />
@@ -127,7 +165,6 @@ function DashboardContent() {
               p: 2,
               display: "flex",
               flexDirection: "column",
-              // height: 240,
             }}
           >
             <Resume generateOrder={generateOrder} items={items} />

@@ -25,3 +25,15 @@ export type AppContextType = {
 export interface ResponseLogin {
   access_token: string;
 }
+
+export interface IProduct {
+  id: number;
+  name: string;
+  price: string;
+  barcode: string;
+  description: string;
+}
+
+export interface SearchResponse {
+  products: IProduct[];
+}
