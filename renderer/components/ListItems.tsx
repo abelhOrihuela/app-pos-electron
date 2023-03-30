@@ -28,7 +28,9 @@ export default function ListItems({ items, removeItem }) {
               <TableRow key={i}>
                 <TableCell>{row.barcode}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell align="right">{`$${row.price}`}</TableCell>
+                <TableCell align="right">{`$${row.price.toFixed(
+                  2
+                )}`}</TableCell>
                 <TableCell align="center">
                   <Button onClick={() => removeItem(row, i)}>
                     <Cancel />

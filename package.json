@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "my-nextron-app",
-  "description": "My application description",
+  "name": "pos",
+  "description": "Punto de venta",
   "version": "1.0.0",
-  "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
+  "author": "Abel Orihuela Mnedoza<abelorihuelamendoza@hotmail.com>",
   "main": "app/background.js",
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

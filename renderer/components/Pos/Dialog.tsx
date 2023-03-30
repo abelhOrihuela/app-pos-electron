@@ -14,8 +14,6 @@ import Typography from "@mui/material/Typography";
 import { blue } from "@mui/material/colors";
 import { IProduct } from "../../context/Types";
 
-const emails = ["username@gmail.com", "user02@gmail.com"];
-
 export interface SimpleDialogProps {
   open: boolean;
   selectedValue: IProduct;
@@ -36,7 +34,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Set backup account</DialogTitle>
+      <DialogTitle>Selecciona un producto</DialogTitle>
       <List sx={{ pt: 0 }} style={{ width: 500 }}>
         {items.map((product) => (
           <ListItem disableGutters key={product.id}>
@@ -53,17 +51,13 @@ function SimpleDialog(props: SimpleDialogProps) {
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disableGutters>
+        <ListItem>
           <ListItemButton
+            alignItems="center"
             autoFocus
-            onClick={() => handleListItemClick("addAccount")}
+            onClick={() => handleClose(null)}
           >
-            <ListItemAvatar>
-              <Avatar>
-                <AddIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Add account" />
+            <Typography align="center">Cerrar</Typography>
           </ListItemButton>
         </ListItem>
       </List>

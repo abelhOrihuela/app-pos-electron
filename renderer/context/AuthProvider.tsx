@@ -1,3 +1,4 @@
+import Router from "next/router";
 import React, { useEffect } from "react";
 import { AppContextType, IUser } from "./Types";
 
@@ -8,7 +9,8 @@ const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = React.useState<IUser>();
   const [isLoading, setIsLoading] = React.useState(true);
   const [token, setToken] = React.useState("");
-  const [error, setError] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [severity, setSeverity] = React.useState("success");
 
   // handlers context
   const setUserData = (user: IUser) => {
@@ -33,10 +35,14 @@ const AppProvider = ({ children }) => {
     window.localStorage.removeItem("access_token");
     setToken("");
     setCurrentUser(null);
+    Router.replace("/Home");
   };
 
-  const setGeneralError = (error: string) => {
-    setError(error);
+  const setNotification = (message: string, severity: string) => {
+    setSeverity(severity);
+    setTimeout(() => {
+      setMessage(message);
+    }, 10);
   };
 
   // validate session
@@ -72,8 +78,9 @@ const AppProvider = ({ children }) => {
         token,
         setAccessToken,
         closeSession,
-        error,
-        setGeneralError,
+        message,
+        setNotification,
+        severity,
       }}
     >
       {children}

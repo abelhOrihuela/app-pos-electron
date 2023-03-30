@@ -8,7 +8,7 @@ function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function Resume({ items, generateOrder }) {
+export default function Resume({ items, generateOrder, disabled }) {
   const getAmount = () => {
     const prices = items.map((product) => product.price);
     const total = prices.reduce((acc, curr) => {
@@ -29,7 +29,7 @@ export default function Resume({ items, generateOrder }) {
         {items.length} Items
       </Typography>
 
-      <Button variant="contained" onClick={generateOrder}>
+      <Button variant="contained" onClick={generateOrder} disabled={disabled}>
         Pagar
       </Button>
     </React.Fragment>

@@ -1,2 +1,4 @@
 .husky
 .gitignore
+*.js
+*.html

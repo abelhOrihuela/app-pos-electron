@@ -16,13 +16,14 @@ import { AxiosResponse } from "axios";
 const theme = createTheme();
 
 export default function SignIn() {
-  const { setAccessToken, setUserData, setGeneralError } = useContext(
+  const { setAccessToken, setUserData, setNotification } = useContext(
     AppContext
   ) as AppContextType;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    console.log(data);
 
     try {
       const {
@@ -31,7 +32,7 @@ export default function SignIn() {
       setAccessToken(access_token);
       setUserData({ username: "Abel" } as IUser);
     } catch (error) {
-      setGeneralError(error.message);
+      setNotification(error.message, "error");
     }
   };
 
@@ -51,7 +52,7 @@ export default function SignIn() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Iniciar sesión
           </Typography>
           <Box
             component="form"
@@ -64,7 +65,7 @@ export default function SignIn() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Usuario"
               name="email"
               autoComplete="email"
               autoFocus
@@ -74,7 +75,7 @@ export default function SignIn() {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               id="password"
               autoComplete="current-password"
@@ -86,7 +87,7 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Ingresar
             </Button>
           </Box>
         </Box>

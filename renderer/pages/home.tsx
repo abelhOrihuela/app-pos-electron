@@ -11,16 +11,17 @@ import {
 } from "@mui/material";
 import ListItems from "../components/ListItems";
 import Resume from "../components/Resume";
-import useKeyboardShortcut from "use-keyboard-shortcut";
+// import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
+import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
 
-import { IProduct } from "../context/Types";
+import { IOrder, IProduct } from "../context/Types";
 import api from "../lib/api";
 import { AppContext } from "../context/AuthProvider";
 import SimpleDialog from "../components/Pos/Dialog";
 import { AxiosResponse } from "axios";
 
 function DashboardContent() {
-  const { setGeneralError } = useContext(AppContext);
+  const { setNotification } = useContext(AppContext);
 
   const [search, setSearch] = useState("");
   const [items, setItems] = useState([]);
@@ -50,11 +51,40 @@ function DashboardContent() {
     setItems(itemsCopy);
   };
 
-  const generateOrder = () => {
-    setItems([]);
-    setTimeout(() => {
-      alert("order was completed succesfully!");
-    }, 100);
+  const getAmount = () => {
+    const prices = items.map((product) => product.price);
+    const total = prices.reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+    return Math.round(total * 100) / 100;
+  };
+
+  const generateOrder = async () => {
+    const orderRequest = {
+      total: getAmount(),
+      totalItems: items.length,
+      products: items.map((p) => {
+        return {
+          idProduct: p.id,
+          quantity: 1,
+          price: p.price,
+        };
+      }),
+    };
+
+    try {
+      await api.post("/pos/orders", orderRequest);
+
+      setItems([]);
+      setTimeout(() => {
+        setNotification("order was completed succesfully!", "success");
+      }, 100);
+    } catch (error) {
+      setNotification(error.message, "error");
+    }
+
+    console.log(orderRequest);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -84,7 +114,7 @@ function DashboardContent() {
         alert("No results");
       }
     } catch (error) {
-      setGeneralError(error.message);
+      setNotification(error.message, "error");
     }
   };
 
@@ -167,7 +197,11 @@ function DashboardContent() {
               flexDirection: "column",
             }}
           >
-            <Resume generateOrder={generateOrder} items={items} />
+            <Resume
+              generateOrder={generateOrder}
+              disabled={items.length == 0}
+              items={items}
+            />
           </Paper>
         </Grid>
       </Grid>
