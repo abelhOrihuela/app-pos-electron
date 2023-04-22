@@ -1,97 +1,106 @@
-import React, { useContext } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import React, { ChangeEvent, useContext, useState } from "react";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import { Button, Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
-import { AppContextType, IUser, ResponseLogin } from "./../../../context/Types";
-import api from "./../../../lib/api";
-import { AxiosResponse } from "axios";
-import { CurrentUserResponse } from "./../../../domain/Responses";
-import { ButtonGroup, Stack } from "@mui/material";
+import { AppContextType, ICategory } from "../../../context/Types";
+import api from "../../../lib/api";
 
-const theme = createTheme();
+import PropTypes from "prop-types";
 
-export default function SignIn({ onCancel }) {
-  const { setAccessToken, setUserData, setNotification } = useContext(
-    AppContext
-  ) as AppContextType;
+function AddCategory({ onCancel, onSuccess }) {
+  const { setNotification } = useContext(AppContext) as AppContextType;
+
+  const [category, setCategory] = useState<ICategory>({
+    name: "",
+    description: "",
+  });
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setCategory({
+      ...category,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log(data);
-
     try {
-      const {
-        data: { access_token },
-      }: AxiosResponse<ResponseLogin> = await api.post("/public/login", data);
-      setAccessToken(access_token);
-      setUserData({ username: "Abel" } as IUser);
-      getCurrentUser();
+      await api.post("/pos/categories", category);
+      setNotification("¡Producto creado!", "success");
+      setCategory({
+        name: "",
+        description: "",
+      });
+      onSuccess();
     } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
-
-  const getCurrentUser = async () => {
-    try {
-      const { data }: AxiosResponse<CurrentUserResponse> = await api.get(
-        "/pos/me"
-      );
-      setUserData(data as IUser);
-    } catch (error) {
-      setNotification(error.message, "error");
+      console.log(error);
+      setNotification(error, "error");
     }
   };
 
   return (
     <React.Fragment>
-      <Typography component="h1" variant="h5">
-        Iniciar sesión
+      <Typography variant="h6" gutterBottom>
+        Agregar categoria
       </Typography>
+
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
         <TextField
           margin="normal"
           required
+          id="name"
+          name="name"
+          label="Nombre"
+          onChange={handleChange}
+          value={category?.name}
           fullWidth
-          id="email"
-          label="Usuario"
-          name="email"
-          autoComplete="email"
-          autoFocus
+          autoComplete="given-name"
         />
+
         <TextField
-          margin="normal"
           required
+          margin="normal"
+          id="description"
+          name="description"
+          label="Description"
+          onChange={handleChange}
+          value={category?.description}
           fullWidth
-          name="password"
-          label="Contraseña"
-          type="password"
-          id="password"
-          autoComplete="current-password"
+          autoComplete="description"
         />
 
-        <Stack direction="row" spacing={2}>
-          <Button type="submit" variant="contained">
-            Ingresar
-          </Button>
+        <Box
+          sx={{
+            marginTop: "16px",
+          }}
+        >
+          <Stack direction="row" spacing={2}>
+            <Button type="submit" variant="contained">
+              Ingresar
+            </Button>
 
-          <Button
-            type="button"
-            onClick={onCancel}
-            variant="contained"
-            color="error"
-          >
-            Cancelar
-          </Button>
-        </Stack>
+            <Button
+              type="button"
+              onClick={onCancel}
+              variant="contained"
+              color="error"
+            >
+              Cancelar
+            </Button>
+          </Stack>
+        </Box>
       </Box>
     </React.Fragment>
   );
 }
+
+export default AddCategory;
+
+AddCategory.propTypes = {
+  onCancel: PropTypes.func,
+  onSuccess: PropTypes.func,
+};

@@ -10,7 +10,6 @@ import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import Link from "@mui/material/Link";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Login from "./../Login";
 import { AppContext } from "./../../context/AuthProvider";
@@ -18,24 +17,6 @@ import { AppContextType } from "./../../context/Types";
 import { Alert, Divider, List, Snackbar } from "@mui/material";
 import { mainListItems, secondaryListItems } from "./listItems";
 import MenuIcon from "@mui/icons-material/Menu";
-
-function Copyright() {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      sx={{ pt: 4 }}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Blaze pixel
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -125,6 +106,32 @@ function Layout(props: any) {
     content = <Login />;
   }
 
+  let contentToast;
+
+  if (severity == "error") {
+    contentToast = (
+      <Alert
+        onClose={handleClose}
+        severity="error"
+        variant="filled"
+        sx={{ width: "100%" }}
+      >
+        {message}
+      </Alert>
+    );
+  } else if (severity == "success") {
+    contentToast = (
+      <Alert
+        onClose={handleClose}
+        severity="success"
+        variant="filled"
+        sx={{ width: "100%" }}
+      >
+        {message}
+      </Alert>
+    );
+  }
+
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
@@ -204,34 +211,15 @@ function Layout(props: any) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             {content}
-            {/* <Copyright /> */}
           </Container>
 
           <Snackbar
-            open={message != ""}
-            autoHideDuration={6000}
+            open={message != "" && severity != ""}
+            autoHideDuration={3000}
             onClose={handleClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           >
-            {severity == "error" ? (
-              <Alert
-                onClose={handleClose}
-                severity="error"
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                {message}
-              </Alert>
-            ) : (
-              <Alert
-                onClose={handleClose}
-                severity="success"
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                {message}
-              </Alert>
-            )}
+            {contentToast != "" && contentToast}
           </Snackbar>
         </Box>
       </Box>

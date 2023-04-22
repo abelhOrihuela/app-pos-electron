@@ -65,7 +65,7 @@ function CatalogPage({ AddComponent, addLabel, title, children }) {
 export default CatalogPage;
 
 CatalogPage.propTypes = {
-  AddComponent: PropTypes.element,
+  AddComponent: PropTypes.any,
   children: PropTypes.element,
   addLabel: PropTypes.string,
   title: PropTypes.string,

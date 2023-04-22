@@ -1,39 +1,29 @@
 import React, { useState, useContext, useEffect } from "react";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+
 import {
-  Button,
   FormControl,
-  Grid,
   IconButton,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Typography,
 } from "@mui/material";
-import PropTypes from "prop-types";
 
-import { AppContextType, IProduct, ResponsePaginated } from "../context/Types";
+import { AppContextType, ResponsePaginated } from "../context/Types";
 import { AppContext } from "../context/AuthProvider";
-import Router from "next/router";
-import { AxiosResponse } from "axios";
 import api from "../lib/api";
+import TableComponent from "./Pos/TableComponent";
+import { AxiosResponse } from "axios";
 
 interface Column {
-  id: "name" | "description" | "barcode" | "price";
+  id: string;
   label: string;
   minWidth?: number;
   align?: "right";
   format?: (value: number) => string;
 }
 
-const columns: readonly Column[] = [
+const columns: Column[] = [
   { id: "name", label: "Nombre", minWidth: 170 },
   { id: "description", label: "Descripción", minWidth: 170 },
   { id: "barcode", label: "Código de barras", minWidth: 170 },
@@ -45,19 +35,12 @@ function ProductsTable() {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
-  const { setGeneralError } = useContext(AppContext) as AppContextType;
+  const { setNotification } = useContext(AppContext) as AppContextType;
 
   const [search, setSearch] = useState("");
 
   const onChange = (e) => {
     setSearch(e.target.value);
-  };
-
-  const removeItem = (row, index) => {
-    const itemsCopy = [...items];
-    itemsCopy.splice(index, 1);
-
-    setItems(itemsCopy);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,7 +68,7 @@ function ProductsTable() {
       setPage(data.page);
       setTotal(data.total);
     } catch (error) {
-      setGeneralError(error.message);
+      setNotification(error.message, "error");
     }
   };
 
@@ -129,56 +112,13 @@ function ProductsTable() {
             />
           </FormControl>
         </form>
-      </Paper>
-
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-      >
-        {/*  */}
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[25, 100, 200]}
-          component="div"
-          count={200}
-          rowsPerPage={rowsPerPage}
+        <TableComponent
           page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          columns={columns}
+          items={items}
+          rowsPerPage={rowsPerPage}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
     </React.Fragment>
@@ -186,7 +126,3 @@ function ProductsTable() {
 }
 
 export default ProductsTable;
-
-ProductsTable.propTypes = {
-  items: PropTypes.array,
-};

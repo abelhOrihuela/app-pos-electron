@@ -21,9 +21,11 @@ import {
 } from "../../../context/Types";
 import api from "../../../lib/api";
 
+import PropTypes from "prop-types";
+
 const theme = createTheme();
 
-function DashboardContent({ onCancel, onSuccess }) {
+function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
@@ -174,4 +176,9 @@ function DashboardContent({ onCancel, onSuccess }) {
   );
 }
 
-export default DashboardContent;
+export default AddProduct;
+
+AddProduct.propTypes = {
+  onCancel: PropTypes.func,
+  onSuccess: PropTypes.func,
+};
