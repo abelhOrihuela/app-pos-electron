@@ -12,6 +12,7 @@ import { AppContext } from "./../context/AuthProvider";
 import { AppContextType, IUser, ResponseLogin } from "./../context/Types";
 import api from "./../lib/api";
 import { AxiosResponse } from "axios";
+import { CurrentUserResponse } from "../domain/Responses";
 
 const theme = createTheme();
 
@@ -31,6 +32,18 @@ export default function SignIn() {
       }: AxiosResponse<ResponseLogin> = await api.post("/public/login", data);
       setAccessToken(access_token);
       setUserData({ username: "Abel" } as IUser);
+      getCurrentUser();
+    } catch (error) {
+      setNotification(error.message, "error");
+    }
+  };
+
+  const getCurrentUser = async () => {
+    try {
+      const { data }: AxiosResponse<CurrentUserResponse> = await api.get(
+        "/pos/me"
+      );
+      setUserData(data as IUser);
     } catch (error) {
       setNotification(error.message, "error");
     }

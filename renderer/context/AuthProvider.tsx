@@ -1,6 +1,9 @@
 import Router from "next/router";
 import React, { useEffect } from "react";
 import { AppContextType, IUser } from "./Types";
+import { AxiosResponse } from "axios";
+import { CurrentUserResponse } from "../domain/Responses";
+import api from "../lib/api";
 
 export const AppContext = React.createContext<AppContextType | null>(null);
 
@@ -48,13 +51,24 @@ const AppProvider = ({ children }) => {
   // validate session
   useEffect(() => {
     const sessionExists = getDataLocalStorage("isAuthenticated");
-    const user = getDataLocalStorage("user");
 
     if (sessionExists) {
-      setCurrentUser(user);
-      setIsLoading(false);
+      getCurrentUser();
     }
   }, []);
+
+  const getCurrentUser = async () => {
+    try {
+      const { data }: AxiosResponse<CurrentUserResponse> = await api.get(
+        "/pos/me"
+      );
+      setUserData(data as IUser);
+    } catch (error) {
+      window.localStorage.clear();
+      setNotification(error.message, "error");
+    }
+    setIsLoading(false);
+  };
 
   const setDataLocalStorage = (key: string, value: any, stringify: boolean) => {
     window.localStorage.setItem(key, stringify ? JSON.stringify(value) : value);

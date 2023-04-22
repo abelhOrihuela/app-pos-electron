@@ -24,6 +24,12 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Productos" />
     </ListItemButton>
+    <ListItemButton href="/Categories">
+      <ListItemIcon>
+        <BarChartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Categorias" />
+    </ListItemButton>
     {/* <ListItemButton>
       <ListItemIcon>
         <ShoppingCartIcon />

@@ -102,22 +102,6 @@ function ProductsTable() {
 
   return (
     <React.Fragment>
-      <Grid container>
-        <Grid item sm={12} style={{ textAlign: "right" }}>
-          <Button href="/AddProduct" type="submit" variant="contained">
-            + Agregar producto
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Grid container>
-        <Grid item>
-          <Typography variant="h6" gutterBottom>
-            Productos
-          </Typography>
-        </Grid>
-      </Grid>
-
       <Paper
         variant="outlined"
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}

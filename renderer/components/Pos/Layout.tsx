@@ -105,7 +105,7 @@ function Layout(props: any) {
   const handleClose = () => {
     setNotification("", "");
   };
-  let content = <div></div>;
+  let content = props.children;
 
   if (isLoading) {
     content = (
@@ -123,8 +123,6 @@ function Layout(props: any) {
     );
   } else if (!user) {
     content = <Login />;
-  } else {
-    content = props.children;
   }
 
   return (

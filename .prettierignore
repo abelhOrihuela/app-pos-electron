@@ -2,3 +2,6 @@
 .gitignore
 *.js
 *.html
+.next
+.dist
+.vscode
