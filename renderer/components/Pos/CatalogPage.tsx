@@ -1,55 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Layout from "./Layout";
-import { AppContext } from "./../../context/AuthProvider";
-import api from "./../../lib/api";
-import {
-  AppContextType,
-  IProduct,
-  ResponsePaginated,
-} from "./../../context/Types";
-import { AxiosResponse } from "axios";
+
 import {
   Box,
   Button,
   Container,
-  CssBaseline,
   Drawer,
   Grid,
-  Paper,
-  TextField,
   Typography,
 } from "@mui/material";
+import PropTypes from "prop-types";
 
 function CatalogPage({ AddComponent, addLabel, title, children }) {
-  const { setNotification } = useContext(AppContext) as AppContextType;
-  const [items, setItems] = useState([]);
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [openAddSection, setOpenAddSection] = useState(false);
-
-  useEffect(() => {
-    getProducts();
-  }, []);
-
-  const getProducts = async () => {
-    try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/products?page=${page}&size=${limit}`
-      );
-
-      setItems(data.items);
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
-
-  const [product, setProduct] = useState<IProduct>({
-    name: "",
-    description: "",
-    id: 0,
-    price: 0,
-    barcode: "",
-  });
 
   const toggleDrawer = () => {
     setOpenAddSection(!openAddSection);
@@ -100,3 +63,11 @@ function CatalogPage({ AddComponent, addLabel, title, children }) {
 }
 
 export default CatalogPage;
+
+CatalogPage.propTypes = {
+  AddComponent: PropTypes.element,
+  children: PropTypes.element,
+  addLabel: PropTypes.string,
+  title: PropTypes.string,
+  onSuccess: PropTypes.func,
+};
