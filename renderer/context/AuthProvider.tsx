@@ -54,6 +54,8 @@ const AppProvider = ({ children }) => {
 
     if (sessionExists) {
       getCurrentUser();
+    } else {
+      setIsLoading(false);
     }
   }, []);
 

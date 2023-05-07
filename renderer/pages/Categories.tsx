@@ -20,40 +20,27 @@ import { TramRounded } from "@mui/icons-material";
 import Login from "./../components/Login";
 import CatalogPage from "../components/Pos/CatalogPage";
 import AddCategory from "./../components/Pos/Forms/AddCategory";
+import TableCategories from "../components/TableCategories";
 
 function Categories() {
   const { setNotification } = useContext(AppContext) as AppContextType;
   const [items, setItems] = useState([]);
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [reload, setReaload] = useState(false);
 
-  useEffect(() => {
-    getProducts();
-  }, []);
-
-  const getProducts = async () => {
-    try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/products?page=${page}&size=${limit}`
-      );
-
-      setItems(data.items);
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
+  const onAddSuccess = () => {
+    setReaload(true);
+    setTimeout(() => {
+      setReaload(false);
+    }, 100);
   };
 
-  const [product, setProduct] = useState<IProduct>({
-    name: "",
-    description: "",
-    id: 0,
-    price: 0,
-    barcode: "",
-  });
-
   return (
-    <CatalogPage AddComponent={AddCategory} addLabel={"+ Agregar categoria"}>
-      helo
+    <CatalogPage
+      AddComponent={AddCategory}
+      addLabel={"+ Agregar categoria"}
+      onAddSuccess={onAddSuccess}
+    >
+      <TableCategories reload={reload} />
     </CatalogPage>
   );
 }

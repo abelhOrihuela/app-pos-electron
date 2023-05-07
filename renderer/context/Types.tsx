@@ -33,6 +33,9 @@ export interface IProduct {
   price: number;
   barcode: string;
   description: string;
+  category: number;
+  unit: string;
+  current_existence: number;
 }
 
 export interface ICategory {

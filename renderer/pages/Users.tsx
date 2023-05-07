@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import CatalogPage from "../components/Pos/CatalogPage";
 import AddProduct from "../components/Pos/Forms/AddProduct";
-import TableProducts from "./../components/TableProducts";
+import TableUsers from "./../components/TableUsers";
 
-function Products() {
+function Users() {
   const [reload, setReaload] = useState(false);
 
   const onAddSuccess = () => {
@@ -15,14 +15,14 @@ function Products() {
 
   return (
     <CatalogPage
-      title="Productos"
+      title="Usuarios"
       AddComponent={AddProduct}
-      addLabel={"+ Agregar producto"}
+      addLabel={"+ Agregar usuario"}
       onAddSuccess={onAddSuccess}
     >
-      <TableProducts reload={reload} />
+      <TableUsers reload={reload} />
     </CatalogPage>
   );
 }
 
-export default Products;
+export default Users;

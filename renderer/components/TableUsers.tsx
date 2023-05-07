@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import Paper from "@mui/material/Paper";
-
+import { format, parseISO } from "date-fns";
 import {
   FormControl,
   IconButton,
@@ -15,51 +15,42 @@ import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
-import { format, parseISO } from "date-fns";
 
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
   align?: "right";
-  formatValue?: (value: any) => string;
+  formatValue?: (value: string) => string;
 }
 
 const columns: Column[] = [
-  { id: "name", label: "Nombre", minWidth: 170 },
-  { id: "description", label: "Descripción", minWidth: 170 },
-  { id: "barcode", label: "Código de barras", minWidth: 50 },
-  { id: "current_existence", label: "Existencia", minWidth: 50 },
-  {
-    id: "price",
-    label: "Precio",
-    minWidth: 50,
-    formatValue: (value: number) => {
-      return `$${value.toFixed(2)}`;
-    },
-  },
-  {
-    id: "created_at",
-    label: "Fecha creación",
-    minWidth: 100,
-    formatValue: (value: string) => {
-      return format(parseISO(value), "dd/MM/yyyy");
-    },
-  },
-  {
-    id: "updated_at",
-    label: "Fecha actualización",
-    minWidth: 100,
-    formatValue: (value: string) => {
-      if (value != "") {
-        return format(parseISO(value), "dd/MM/yyyy");
-      }
-      return "No hay información";
-    },
-  },
+  { id: "email", label: "Usuario", minWidth: 170 },
+  { id: "username", label: "Nombre", minWidth: 170 },
+  //   { id: "description", label: "Descripción", minWidth: 170 },
+  //   {
+  //     id: "created_at",
+  //     label: "Fecha creación",
+  //     minWidth: 170,
+  //     formatValue: (value: string) => {
+  //       return format(parseISO(value), "dd/MM/yyyy");
+  //     },
+  //   },
+  //   {
+  //     id: "updated_at",
+  //     label: "Fecha actualización",
+  //     minWidth: 170,
+  //     formatValue: (value: string) => {
+  //       console.log(value);
+  //       if (value != "") {
+  //         return format(parseISO(value), "dd/MM/yyyy");
+  //       }
+  //       return "No hay información";
+  //     },
+  //   },
 ];
 
-function TableProducts({ reload }) {
+function TableCategories({ reload }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [items, setItems] = useState([]);
@@ -74,20 +65,20 @@ function TableProducts({ reload }) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    getProducts();
+    getUsers();
   };
 
   useEffect(() => {
-    getProducts();
+    getUsers();
   }, [page, rowsPerPage]);
 
   useEffect(() => {
     if (reload) {
-      getProducts();
+      getUsers();
     }
   }, [reload]);
 
-  const getProducts = async () => {
+  const getUsers = async () => {
     let filters = "";
 
     if (search != "") {
@@ -96,7 +87,7 @@ function TableProducts({ reload }) {
 
     try {
       const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/products?page=${page}&size=${rowsPerPage}${filters}`
+        `/pos/users?page=${page}&size=${rowsPerPage}${filters}`
       );
 
       setItems(data.items);
@@ -160,8 +151,8 @@ function TableProducts({ reload }) {
   );
 }
 
-export default TableProducts;
+export default TableCategories;
 
-TableProducts.propTypes = {
+TableCategories.propTypes = {
   reload: PropTypes.bool,
 };

@@ -47,7 +47,9 @@ function SimpleDialog(props: SimpleDialogProps) {
                   <PersonIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={product.name} />
+              <ListItemText
+                primary={`${product.name} | ${product.description}`}
+              />
             </ListItemButton>
           </ListItem>
         ))}

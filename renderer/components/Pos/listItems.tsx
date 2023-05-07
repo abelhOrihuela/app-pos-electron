@@ -9,6 +9,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import { Archive, Category, Inventory } from "@mui/icons-material";
 
 export const mainListItems = (
   <React.Fragment>
@@ -20,40 +21,30 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton href="/Products">
       <ListItemIcon>
-        <DashboardIcon />
+        <Inventory />
       </ListItemIcon>
       <ListItemText primary="Productos" />
     </ListItemButton>
     <ListItemButton href="/Categories">
       <ListItemIcon>
-        <BarChartIcon />
+        <Category />
       </ListItemIcon>
       <ListItemText primary="Categorias" />
     </ListItemButton>
-    {/* <ListItemButton>
+
+    <ListItemButton href="/Categories">
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <Archive />
       </ListItemIcon>
-      <ListItemText primary="Orders" />
+      <ListItemText primary="Órdenes" />
     </ListItemButton>
-    <ListItemButton>
+
+    <ListItemButton href="/Users">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="Usuarios" />
     </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItemButton> */}
   </React.Fragment>
 );
 

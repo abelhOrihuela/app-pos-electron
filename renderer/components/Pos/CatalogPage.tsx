@@ -11,11 +11,22 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 
-function CatalogPage({ AddComponent, addLabel, title, children }) {
+function CatalogPage({
+  AddComponent,
+  addLabel,
+  title,
+  children,
+  onAddSuccess,
+}) {
   const [openAddSection, setOpenAddSection] = useState(false);
 
   const toggleDrawer = () => {
     setOpenAddSection(!openAddSection);
+  };
+
+  const onSuccess = () => {
+    toggleDrawer();
+    onAddSuccess();
   };
 
   return (
@@ -38,23 +49,17 @@ function CatalogPage({ AddComponent, addLabel, title, children }) {
 
       {children}
 
-      <Drawer
-        anchor="right"
-        open={openAddSection}
-        onClose={toggleDrawer}
-        style={{
-          paddingTop: "100px",
-        }}
-      >
+      <Drawer anchor="right" open={openAddSection} onClose={toggleDrawer}>
         <Container component="main" maxWidth="xs">
           <Box
             sx={{
-              marginTop: "100px",
+              marginTop: "80px",
+              marginBottom: "30px",
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <AddComponent onCancel={toggleDrawer} onSuccess={toggleDrawer} />
+            <AddComponent onCancel={toggleDrawer} onSuccess={onSuccess} />
           </Box>
         </Container>
       </Drawer>
@@ -70,4 +75,5 @@ CatalogPage.propTypes = {
   addLabel: PropTypes.string,
   title: PropTypes.string,
   onSuccess: PropTypes.func,
+  onAddSuccess: PropTypes.func,
 };

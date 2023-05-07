@@ -30,15 +30,14 @@ function AddCategory({ onCancel, onSuccess }) {
     event.preventDefault();
     try {
       await api.post("/pos/categories", category);
-      setNotification("¡Producto creado!", "success");
+      setNotification("¡Categoria creada!", "success");
       setCategory({
         name: "",
         description: "",
       });
       onSuccess();
     } catch (error) {
-      console.log(error);
-      setNotification(error, "error");
+      setNotification(error.message, "error");
     }
   };
 
@@ -52,6 +51,7 @@ function AddCategory({ onCancel, onSuccess }) {
         <TextField
           margin="normal"
           required
+          size="small"
           id="name"
           name="name"
           label="Nombre"
@@ -65,6 +65,7 @@ function AddCategory({ onCancel, onSuccess }) {
           required
           margin="normal"
           id="description"
+          size="small"
           name="description"
           label="Description"
           onChange={handleChange}
