@@ -15,8 +15,9 @@ import Login from "./../Login";
 import { AppContext } from "./../../context/AuthProvider";
 import { AppContextType } from "./../../context/Types";
 import { Alert, Divider, List, Snackbar } from "@mui/material";
-import { mainListItems, secondaryListItems } from "./listItems";
+import MainListItems from "./listItems";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useRouter } from "next/router";
 
 const drawerWidth = 240;
 
@@ -132,6 +133,8 @@ function Layout(props: any) {
     );
   }
 
+  const router = useRouter();
+
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
@@ -189,9 +192,7 @@ function Layout(props: any) {
             </Toolbar>
             <Divider />
             <List component="nav">
-              {mainListItems}
-              <Divider sx={{ my: 1 }} />
-              {secondaryListItems}
+              <MainListItems currentPage={router.pathname} />
             </List>
           </Drawer>
         )}

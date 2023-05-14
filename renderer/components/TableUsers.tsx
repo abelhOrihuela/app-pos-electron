@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import { format, parseISO } from "date-fns";
 import {
+  Button,
   FormControl,
   IconButton,
   InputAdornment,
@@ -15,6 +16,7 @@ import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
+import UpdateUser from "./Pos/Forms/UpdateUser";
 
 interface Column {
   id: string;
@@ -27,27 +29,26 @@ interface Column {
 const columns: Column[] = [
   { id: "email", label: "Usuario", minWidth: 170 },
   { id: "username", label: "Nombre", minWidth: 170 },
-  //   { id: "description", label: "Descripción", minWidth: 170 },
-  //   {
-  //     id: "created_at",
-  //     label: "Fecha creación",
-  //     minWidth: 170,
-  //     formatValue: (value: string) => {
-  //       return format(parseISO(value), "dd/MM/yyyy");
-  //     },
-  //   },
-  //   {
-  //     id: "updated_at",
-  //     label: "Fecha actualización",
-  //     minWidth: 170,
-  //     formatValue: (value: string) => {
-  //       console.log(value);
-  //       if (value != "") {
-  //         return format(parseISO(value), "dd/MM/yyyy");
-  //       }
-  //       return "No hay información";
-  //     },
-  //   },
+  {
+    id: "created_at",
+    label: "Fecha creación",
+    minWidth: 170,
+    formatValue: (value: string) => {
+      return format(parseISO(value), "dd/MM/yyyy");
+    },
+  },
+  {
+    id: "updated_at",
+    label: "Fecha actualización",
+    minWidth: 170,
+    formatValue: (value: string) => {
+      console.log(value);
+      if (value != "") {
+        return format(parseISO(value), "dd/MM/yyyy");
+      }
+      return "No hay información";
+    },
+  },
 ];
 
 function TableCategories({ reload }) {
@@ -59,6 +60,11 @@ function TableCategories({ reload }) {
 
   const [search, setSearch] = useState("");
 
+  const [item, setItem] = useState(null);
+
+  const handleSelectItem = (item: any) => {
+    setItem(item);
+  };
   const onChange = (e) => {
     setSearch(e.target.value);
   };
@@ -109,43 +115,65 @@ function TableCategories({ reload }) {
     setPage(0);
   };
 
+  const onCancelDetail = () => {
+    setItem(null);
+  };
+
+  const onSuccessDetail = () => {
+    setItem(null);
+    getUsers();
+  };
+
   return (
     <React.Fragment>
       <Paper
         variant="outlined"
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
       >
-        {" "}
-        <form onSubmit={handleSubmit}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel htmlFor="outlined-adornment-password">
-              Buscar...
-            </InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type="text"
-              onChange={onChange}
-              value={search}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                  ></IconButton>
-                </InputAdornment>
-              }
-              label="Buscar..."
+        {item ? (
+          <div>
+            <UpdateUser
+              data={item}
+              onCancel={onCancelDetail}
+              onSuccess={onSuccessDetail}
             />
-          </FormControl>
-        </form>
-        <TableComponent
-          page={page}
-          columns={columns}
-          items={items}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+          </div>
+        ) : (
+          <React.Fragment>
+            {" "}
+            <form onSubmit={handleSubmit}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Buscar...
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type="text"
+                  onChange={onChange}
+                  value={search}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        edge="end"
+                      ></IconButton>
+                    </InputAdornment>
+                  }
+                  label="Buscar..."
+                />
+              </FormControl>
+            </form>
+            <TableComponent
+              page={page}
+              columns={columns}
+              items={items}
+              rowsPerPage={rowsPerPage}
+              handleChangePage={handleChangePage}
+              handleChangeRowsPerPage={handleChangeRowsPerPage}
+              handleSelectItem={handleSelectItem}
+            />
+          </React.Fragment>
+        )}
       </Paper>
     </React.Fragment>
   );

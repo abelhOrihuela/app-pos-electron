@@ -12,14 +12,11 @@ import {
 import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
 import { AxiosResponse } from "axios";
-import {
-  AppContextType,
-  IProduct,
-  ResponsePaginated,
-} from "../../../context/Types";
+import { AppContextType, ResponsePaginated } from "../../../context/Types";
 import api from "../../../lib/api";
 
 import PropTypes from "prop-types";
+import { IUserForm } from "../../../domain/Responses";
 
 function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
@@ -41,51 +38,32 @@ function AddProduct({ onCancel, onSuccess }) {
     }
   };
 
-  const [product, setProduct] = useState<IProduct>({
-    name: "",
-    description: "",
-    id: 0,
-    price: null,
-    barcode: "",
-    category: null,
-    unit: "",
-    current_existence: null,
+  const [user, setUser] = useState<IUserForm>({
+    email: "",
+    username: "",
+    password: "",
+    role: "",
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = event.target;
-
-    console.log(event);
-
-    let parsedValue: any;
-
-    if (type == "number") {
-      parsedValue = Number(value);
-    } else {
-      parsedValue = value;
-    }
-
-    setProduct({
-      ...product,
-      [name]: parsedValue,
+    const { name, value } = event.target;
+    setUser({
+      ...user,
+      [name]: value,
     });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await api.post("/pos/products", product);
+      await api.post("/pos/users", user);
       //Router.replace("/Home");
-      setNotification("¡Producto creado!", "success");
-      setProduct({
-        id: 0,
-        name: "",
-        description: "",
-        barcode: "",
-        price: null,
-        category: null,
-        unit: "",
-        current_existence: null,
+      setNotification("Usuario creado!", "success");
+      setUser({
+        email: "",
+        username: "",
+        password: "",
+        role: "",
       });
       onSuccess();
     } catch (error) {
@@ -96,7 +74,7 @@ function AddProduct({ onCancel, onSuccess }) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Agregar producto
+        Agregar usuario
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -104,14 +82,14 @@ function AddProduct({ onCancel, onSuccess }) {
           <TextField
             required
             margin="normal"
-            id="barcode"
+            id="email"
             size="small"
-            name="barcode"
-            label="Código de barras"
+            name="email"
+            label="Correo electrónico"
             fullWidth
-            autoComplete="barcode"
+            autoComplete="email"
             onChange={handleChange}
-            value={product?.barcode}
+            value={user?.email}
           />
         </FormControl>
 
@@ -120,28 +98,13 @@ function AddProduct({ onCancel, onSuccess }) {
             margin="normal"
             size="small"
             required
-            id="name"
-            name="name"
-            label="Nombre"
+            id="username"
+            name="username"
+            label="Nombre de usuario"
             onChange={handleChange}
-            value={product?.name}
+            value={user?.username}
             fullWidth
             autoComplete="given-name"
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            required
-            margin="normal"
-            id="description"
-            name="description"
-            label="Description"
-            size="small"
-            onChange={handleChange}
-            value={product?.description}
-            fullWidth
-            autoComplete="description"
           />
         </FormControl>
 
@@ -153,50 +116,20 @@ function AddProduct({ onCancel, onSuccess }) {
         >
           <FormControl fullWidth>
             <InputLabel size="small" id="demo-simple-select-label">
-              Unidad *
+              Role *
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={product.unit}
-              label="Categoria"
+              value={user.role}
+              label="Rol"
               fullWidth
               size="small"
-              name="unit"
+              name="role"
               onChange={handleChange}
             >
-              <MenuItem value={"PZA"}>Pieza</MenuItem>
-              <MenuItem value={"KG"}>Kilogramo</MenuItem>
-              <MenuItem value={"CJA"}>Caja</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        <Box
-          sx={{
-            marginTop: "16px",
-            marginBottom: "8px",
-          }}
-        >
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label" size="small">
-              Categoria *
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={product.category}
-              size="small"
-              label="Categoria"
-              fullWidth
-              name="category"
-              onChange={handleChange}
-            >
-              {categories.map((category, index) => (
-                <MenuItem key={index} value={category.id}>
-                  {category.name}
-                </MenuItem>
-              ))}
+              <MenuItem value={"admin"}>Administrador</MenuItem>
+              <MenuItem value={"cashier"}>Cajero</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -206,30 +139,14 @@ function AddProduct({ onCancel, onSuccess }) {
             size="small"
             required
             margin="normal"
-            id="price"
-            name="price"
-            label="Precio"
+            id="password"
+            name="password"
+            label="Password"
             onChange={handleChange}
-            value={product?.price}
-            type="number"
+            value={user?.password}
+            type="text"
             fullWidth
             autoComplete="price"
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            required
-            margin="normal"
-            id="current_existence"
-            name="current_existence"
-            label="Existencia"
-            size="small"
-            onChange={handleChange}
-            value={product?.current_existence}
-            type="number"
-            fullWidth
-            autoComplete="current_existence"
           />
         </FormControl>
 

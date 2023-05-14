@@ -11,35 +11,60 @@ import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { Archive, Category, Inventory } from "@mui/icons-material";
 
-export const mainListItems = (
+const items = [
+  {
+    label: "Inicio",
+    path: "/Home",
+  },
+  {
+    label: "Productos",
+    path: "/Products",
+  },
+  {
+    label: "Categorias",
+    path: "/Categories",
+  },
+  {
+    label: "Órdenes",
+    path: "/Order",
+  },
+  {
+    label: "Usuarios",
+    path: "/Users",
+  },
+];
+
+const MainListItems = ({ currentPage }) => (
   <React.Fragment>
-    <ListItemButton href="/Home">
+    <ListItemButton selected={currentPage == "/Home"} href="/Home">
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
       <ListItemText primary="Inicio" />
     </ListItemButton>
-    <ListItemButton href="/Products">
+
+    <ListItemButton selected={currentPage == "/Products"} href="/Products">
       <ListItemIcon>
         <Inventory />
       </ListItemIcon>
       <ListItemText primary="Productos" />
     </ListItemButton>
-    <ListItemButton href="/Categories">
+
+    <ListItemButton selected={currentPage == "/Categories"} href="/Categories">
       <ListItemIcon>
         <Category />
       </ListItemIcon>
       <ListItemText primary="Categorias" />
     </ListItemButton>
 
-    <ListItemButton href="/Categories">
+    <ListItemButton selected={currentPage == "/Orders"} href="/Orders">
       <ListItemIcon>
         <Archive />
       </ListItemIcon>
       <ListItemText primary="Órdenes" />
     </ListItemButton>
 
-    <ListItemButton href="/Users">
+    <ListItemButton selected={currentPage == "/Users"} href="/Users">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
@@ -48,28 +73,4 @@ export const mainListItems = (
   </React.Fragment>
 );
 
-export const secondaryListItems = (
-  <React.Fragment>
-    {/* <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItemButton> */}
-  </React.Fragment>
-);
+export default MainListItems;

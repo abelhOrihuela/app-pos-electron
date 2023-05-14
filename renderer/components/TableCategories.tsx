@@ -40,7 +40,6 @@ const columns: Column[] = [
     label: "Fecha actualización",
     minWidth: 170,
     formatValue: (value: string) => {
-      console.log(value);
       if (value != "") {
         return format(parseISO(value), "dd/MM/yyyy");
       }

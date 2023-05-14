@@ -8,7 +8,7 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 function TableComponent({
@@ -18,6 +18,7 @@ function TableComponent({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  handleSelectItem,
 }) {
   return (
     <Paper
@@ -28,9 +29,9 @@ function TableComponent({
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
+              {columns.map((column, i) => (
                 <TableCell
-                  key={column.id}
+                  key={i}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
@@ -40,9 +41,15 @@ function TableComponent({
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((row) => {
+            {items.map((row, i) => {
               return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                <TableRow
+                  key={i}
+                  onClick={() => handleSelectItem(row)}
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                >
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
@@ -58,7 +65,7 @@ function TableComponent({
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[25, 100, 200]}
+        rowsPerPageOptions={[5, 10, 50]}
         component="div"
         count={200}
         rowsPerPage={rowsPerPage}
@@ -79,4 +86,5 @@ TableComponent.propTypes = {
   rowsPerPage: PropTypes.number,
   handleChangePage: PropTypes.func,
   handleChangeRowsPerPage: PropTypes.func,
+  handleSelectItem: PropTypes.func,
 };

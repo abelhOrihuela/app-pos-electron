@@ -60,3 +60,10 @@ export interface CurrentUserResponse {
   email: string;
   role: string;
 }
+
+export interface IUserForm {
+  username: string;
+  email: string;
+  role: string;
+  password: string;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CatalogPage from "../components/Pos/CatalogPage";
-import AddProduct from "../components/Pos/Forms/AddProduct";
+import AddUser from "../components/Pos/Forms/AddUser";
 import TableUsers from "./../components/TableUsers";
 
 function Users() {
@@ -16,7 +16,7 @@ function Users() {
   return (
     <CatalogPage
       title="Usuarios"
-      AddComponent={AddProduct}
+      AddComponent={AddUser}
       addLabel={"+ Agregar usuario"}
       onAddSuccess={onAddSuccess}
     >
