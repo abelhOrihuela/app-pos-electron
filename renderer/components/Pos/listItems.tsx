@@ -2,37 +2,10 @@ import * as React from "react";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LayersIcon from "@mui/icons-material/Layers";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import { Archive, Category, Inventory } from "@mui/icons-material";
-
-const items = [
-  {
-    label: "Inicio",
-    path: "/Home",
-  },
-  {
-    label: "Productos",
-    path: "/Products",
-  },
-  {
-    label: "Categorias",
-    path: "/Categories",
-  },
-  {
-    label: "Órdenes",
-    path: "/Order",
-  },
-  {
-    label: "Usuarios",
-    path: "/Users",
-  },
-];
+import PropTypes from "prop-types";
 
 const MainListItems = ({ currentPage }) => (
   <React.Fragment>
@@ -74,3 +47,7 @@ const MainListItems = ({ currentPage }) => (
 );
 
 export default MainListItems;
+
+MainListItems.propTypes = {
+  currentPage: PropTypes.string,
+};

@@ -78,7 +78,7 @@ function del(url, params) {
   });
 }
 
-function get(url, params) {
+function get(url, params = null) {
   const token = getToken();
 
   if (token) {

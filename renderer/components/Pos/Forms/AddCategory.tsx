@@ -4,15 +4,16 @@ import TextField from "@mui/material/TextField";
 import { Button, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
-import { AppContextType, ICategory } from "../../../context/Types";
+import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
 
 import PropTypes from "prop-types";
+import { ICreateCategoryForm } from "../../../domain/Forms";
 
 function AddCategory({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
 
-  const [category, setCategory] = useState<ICategory>({
+  const [category, setCategory] = useState<ICreateCategoryForm>({
     name: "",
     description: "",
   });

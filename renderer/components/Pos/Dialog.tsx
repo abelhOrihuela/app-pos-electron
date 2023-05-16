@@ -12,13 +12,13 @@ import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 import { blue } from "@mui/material/colors";
-import { IProduct } from "../../context/Types";
+import { IProductResponse } from "../../domain/Responses";
 
 export interface SimpleDialogProps {
   open: boolean;
-  selectedValue: IProduct;
-  onClose: (value: IProduct) => void;
-  items: IProduct[];
+  selectedValue: IProductResponse;
+  onClose: (value: IProductResponse) => void;
+  items: IProductResponse[];
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
@@ -28,7 +28,7 @@ function SimpleDialog(props: SimpleDialogProps) {
     onClose(selectedValue);
   };
 
-  const handleListItemClick = (value: IProduct) => {
+  const handleListItemClick = (value: IProductResponse) => {
     onClose(value);
   };
 

@@ -28,7 +28,6 @@ export interface ResponseLogin {
 }
 
 export interface IProduct {
-  id: number;
   name: string;
   price: number;
   barcode: string;
@@ -45,20 +44,4 @@ export interface ICategory {
 
 export interface IOrder {
   id: number;
-}
-
-export interface ResponsePaginated {
-  items: [];
-  page: number;
-  size: number;
-  max_page: number;
-  total_pages: number;
-  total: number;
-  last: boolean;
-  first: boolean;
-  visible: number;
-}
-
-export interface SearchResponse {
-  products: IProduct[];
 }

@@ -1,14 +1,10 @@
 import * as React from "react";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Title from "./Title";
 import { Button } from "@mui/material";
+import PropTypes from "prop-types";
 
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
-
-export default function Resume({ items, generateOrder, disabled }) {
+function Resume({ items, generateOrder, disabled }) {
   const getAmount = () => {
     const prices = items.map((product) => product.price);
     const total = prices.reduce((acc, curr) => {
@@ -35,3 +31,11 @@ export default function Resume({ items, generateOrder, disabled }) {
     </React.Fragment>
   );
 }
+
+export default Resume;
+
+Resume.propTypes = {
+  items: PropTypes.array,
+  generateOrder: PropTypes.func,
+  disabled: PropTypes.bool,
+};

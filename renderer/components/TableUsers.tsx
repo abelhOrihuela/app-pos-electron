@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import { format, parseISO } from "date-fns";
 import {
-  Button,
   FormControl,
   IconButton,
   InputAdornment,
@@ -10,20 +9,21 @@ import {
   OutlinedInput,
 } from "@mui/material";
 
-import { AppContextType, ResponsePaginated } from "../context/Types";
+import { AppContextType } from "../context/Types";
 import { AppContext } from "../context/AuthProvider";
 import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import UpdateUser from "./Pos/Forms/UpdateUser";
+import { IResponseUsersPaginated, IUserResponse } from "../domain/Responses";
 
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
   align?: "right";
-  formatValue?: (value: string) => string;
+  formatValue?: (value: string | number) => string;
 }
 
 const columns: Column[] = [
@@ -42,7 +42,6 @@ const columns: Column[] = [
     label: "Fecha actualización",
     minWidth: 170,
     formatValue: (value: string) => {
-      console.log(value);
       if (value != "") {
         return format(parseISO(value), "dd/MM/yyyy");
       }
@@ -55,34 +54,36 @@ function TableCategories({ reload }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
   const { setNotification } = useContext(AppContext) as AppContextType;
 
   const [search, setSearch] = useState("");
 
   const [item, setItem] = useState(null);
 
-  const handleSelectItem = (item: any) => {
+  // initial load
+  useEffect(() => {
+    getUsers();
+  }, [page, rowsPerPage]);
+
+  // reaload after user creation
+  useEffect(() => {
+    if (reload) {
+      getUsers();
+    }
+  }, [reload]);
+
+  const handleSelectItem = (item: IUserResponse) => {
     setItem(item);
   };
-  const onChange = (e) => {
-    setSearch(e.target.value);
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     getUsers();
   };
-
-  useEffect(() => {
-    getUsers();
-  }, [page, rowsPerPage]);
-
-  useEffect(() => {
-    if (reload) {
-      getUsers();
-    }
-  }, [reload]);
 
   const getUsers = async () => {
     let filters = "";
@@ -92,19 +93,19 @@ function TableCategories({ reload }) {
     }
 
     try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/users?page=${page}&size=${rowsPerPage}${filters}`
+      const { data }: AxiosResponse<IResponseUsersPaginated> = await api.get(
+        `/pos/users?page=${page}&size=${rowsPerPage}${filters}`,
+        null
       );
 
       setItems(data.items);
       setPage(data.page);
-      setTotal(data.total);
     } catch (error) {
       setNotification(error.message, "error");
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (event: React.TouchEvent, newPage: number) => {
     setPage(newPage);
   };
 
@@ -125,57 +126,52 @@ function TableCategories({ reload }) {
   };
 
   return (
-    <React.Fragment>
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-      >
-        {item ? (
-          <div>
-            <UpdateUser
-              data={item}
-              onCancel={onCancelDetail}
-              onSuccess={onSuccessDetail}
-            />
-          </div>
-        ) : (
-          <React.Fragment>
-            {" "}
-            <form onSubmit={handleSubmit}>
-              <FormControl variant="outlined" fullWidth>
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Buscar...
-                </InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type="text"
-                  onChange={onChange}
-                  value={search}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        edge="end"
-                      ></IconButton>
-                    </InputAdornment>
-                  }
-                  label="Buscar..."
-                />
-              </FormControl>
-            </form>
-            <TableComponent
-              page={page}
-              columns={columns}
-              items={items}
-              rowsPerPage={rowsPerPage}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-              handleSelectItem={handleSelectItem}
-            />
-          </React.Fragment>
-        )}
-      </Paper>
-    </React.Fragment>
+    <Paper
+      variant="outlined"
+      sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+    >
+      {item ? (
+        <UpdateUser
+          data={item}
+          onCancel={onCancelDetail}
+          onSuccess={onSuccessDetail}
+        />
+      ) : (
+        <React.Fragment>
+          <form onSubmit={handleSubmit}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel htmlFor="outlined-adornment-password">
+                Buscar...
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type="text"
+                onChange={onChange}
+                value={search}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      edge="end"
+                    ></IconButton>
+                  </InputAdornment>
+                }
+                label="Buscar..."
+              />
+            </FormControl>
+          </form>
+          <TableComponent
+            page={page}
+            columns={columns}
+            items={items}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            handleSelectItem={handleSelectItem}
+          />
+        </React.Fragment>
+      )}
+    </Paper>
   );
 }
 

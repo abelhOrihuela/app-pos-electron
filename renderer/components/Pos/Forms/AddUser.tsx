@@ -11,34 +11,16 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
-import { AxiosResponse } from "axios";
-import { AppContextType, ResponsePaginated } from "../../../context/Types";
+import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
 
 import PropTypes from "prop-types";
-import { IUserForm } from "../../../domain/Responses";
+import { ICreateUserForm } from "../../../domain/Forms";
 
 function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
-  const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    getCategories();
-  }, []);
-
-  const getCategories = async () => {
-    try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/categories?page=0&size=100`
-      );
-
-      setCategories(data.items);
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
-
-  const [user, setUser] = useState<IUserForm>({
+  const [user, setUser] = useState<ICreateUserForm>({
     email: "",
     username: "",
     password: "",
@@ -57,7 +39,6 @@ function AddProduct({ onCancel, onSuccess }) {
     event.preventDefault();
     try {
       await api.post("/pos/users", user);
-      //Router.replace("/Home");
       setNotification("Usuario creado!", "success");
       setUser({
         email: "",

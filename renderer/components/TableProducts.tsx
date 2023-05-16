@@ -9,20 +9,25 @@ import {
   OutlinedInput,
 } from "@mui/material";
 
-import { AppContextType, ResponsePaginated } from "../context/Types";
+import { AppContextType } from "../context/Types";
 import { AppContext } from "../context/AuthProvider";
 import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import { format, parseISO } from "date-fns";
+import UpdateProduct from "./Pos/Forms/UpdateProduct";
+import {
+  IProductResponse,
+  IResponseProductsPaginated,
+} from "../domain/Responses";
 
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
   align?: "right";
-  formatValue?: (value: any) => string;
+  formatValue?: (value: string | number) => string;
 }
 
 const columns: Column[] = [
@@ -63,13 +68,13 @@ function TableProducts({ reload }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
   const { setNotification } = useContext(AppContext) as AppContextType;
 
   const [search, setSearch] = useState("");
+  const [item, setItem] = useState(null);
 
-  const onChange = (e) => {
-    setSearch(e.target.value);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -95,13 +100,13 @@ function TableProducts({ reload }) {
     }
 
     try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/products?page=${page}&size=${rowsPerPage}${filters}`
+      const { data }: AxiosResponse<IResponseProductsPaginated> = await api.get(
+        `/pos/products?page=${page}&size=${rowsPerPage}${filters}`,
+        null
       );
 
       setItems(data.items);
       setPage(data.page);
-      setTotal(data.total);
     } catch (error) {
       setNotification(error.message, "error");
     }
@@ -118,45 +123,66 @@ function TableProducts({ reload }) {
     setPage(0);
   };
 
+  const handleSelectItem = (item: IProductResponse) => {
+    setItem(item);
+  };
+
+  const onCancelDetail = () => {
+    setItem(null);
+  };
+
+  const onSuccessDetail = () => {
+    setItem(null);
+    getProducts();
+  };
+
   return (
-    <React.Fragment>
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-      >
-        {" "}
-        <form onSubmit={handleSubmit}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel htmlFor="outlined-adornment-password">
-              Buscar...
-            </InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type="text"
-              onChange={onChange}
-              value={search}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                  ></IconButton>
-                </InputAdornment>
-              }
-              label="Buscar..."
-            />
-          </FormControl>
-        </form>
-        <TableComponent
-          page={page}
-          columns={columns}
-          items={items}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
+    <Paper
+      variant="outlined"
+      sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+    >
+      {item ? (
+        <UpdateProduct
+          data={item}
+          onCancel={onCancelDetail}
+          onSuccess={onSuccessDetail}
         />
-      </Paper>
-    </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <form onSubmit={handleSubmit}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel htmlFor="outlined-adornment-password">
+                Buscar...
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type="text"
+                onChange={onChange}
+                value={search}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      edge="end"
+                    ></IconButton>
+                  </InputAdornment>
+                }
+                label="Buscar..."
+              />
+            </FormControl>
+          </form>
+          <TableComponent
+            page={page}
+            columns={columns}
+            items={items}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            handleSelectItem={handleSelectItem}
+          />
+        </React.Fragment>
+      )}
+    </Paper>
   );
 }
 

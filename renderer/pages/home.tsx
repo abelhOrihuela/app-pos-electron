@@ -11,10 +11,7 @@ import {
 } from "@mui/material";
 import ListItems from "../components/ListItems";
 import Resume from "../components/Resume";
-// import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
-import useKeyboardShortcut from "./../../node_modules/use-keyboard-shortcut/index";
-
-import { IOrder, IProduct } from "../context/Types";
+import { IProductResponse } from "../domain/Responses";
 import api from "../lib/api";
 import { AppContext } from "../context/AuthProvider";
 import SimpleDialog from "../components/Pos/Dialog";
@@ -28,27 +25,18 @@ function DashboardContent() {
   const [itemsSearch, setItemsSearch] = useState([]);
 
   const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState<IProduct>();
+  const [selectedValue, setSelectedValue] = useState<IProductResponse>();
 
-  const { flushHeldKeys } = useKeyboardShortcut(
-    ["Control", "P"],
-    (shortcutKeys) => alert("Shift + H has been pressed."),
-    {
-      overrideSystem: true,
-      ignoreInputFields: false,
-      repeatOnHold: false,
-    }
-  );
-
-  const onChange = (e) => {
-    setSearch(e.target.value);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
-  const removeItem = (row, index) => {
+  const removeItem = (product: IProductResponse, index: number) => {
     const itemsCopy = [...items];
     itemsCopy.splice(index, 1);
 
     setItems(itemsCopy);
+    setNotification(`¡${product.name} se elimino correctamente!`, "success");
   };
 
   const getAmount = () => {
@@ -83,8 +71,6 @@ function DashboardContent() {
     } catch (error) {
       setNotification(error.message, "error");
     }
-
-    console.log(orderRequest);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -93,8 +79,9 @@ function DashboardContent() {
     event.preventDefault();
 
     try {
-      const { data }: AxiosResponse<IProduct[]> = await api.get(
-        "/pos/search?q=" + search
+      const { data }: AxiosResponse<IProductResponse[]> = await api.get(
+        `/pos/search?q=${search}`,
+        null
       );
       if (data != null) {
         if (data.length > 1) {
@@ -118,7 +105,7 @@ function DashboardContent() {
     }
   };
 
-  const handleClose = (value: IProduct) => {
+  const handleClose = (value: IProductResponse) => {
     const itemsCopy = [...items];
 
     setOpen(false);

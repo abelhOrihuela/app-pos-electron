@@ -12,14 +12,10 @@ import {
 import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
 import { AxiosResponse } from "axios";
-import {
-  AppContextType,
-  IProduct,
-  ResponsePaginated,
-} from "../../../context/Types";
+import { AppContextType, IProduct } from "../../../context/Types";
 import api from "../../../lib/api";
-
 import PropTypes from "prop-types";
+import { IResponsePaginated } from "../../../domain/Responses";
 
 function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
@@ -31,10 +27,10 @@ function AddProduct({ onCancel, onSuccess }) {
 
   const getCategories = async () => {
     try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/categories?page=0&size=100`
+      const { data }: AxiosResponse<IResponsePaginated> = await api.get(
+        `/pos/categories?page=0&size=100`,
+        null
       );
-
       setCategories(data.items);
     } catch (error) {
       setNotification(error.message, "error");
@@ -44,7 +40,6 @@ function AddProduct({ onCancel, onSuccess }) {
   const [product, setProduct] = useState<IProduct>({
     name: "",
     description: "",
-    id: 0,
     price: null,
     barcode: "",
     category: null,
@@ -54,10 +49,7 @@ function AddProduct({ onCancel, onSuccess }) {
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = event.target;
-
-    console.log(event);
-
-    let parsedValue: any;
+    let parsedValue: number | string;
 
     if (type == "number") {
       parsedValue = Number(value);
@@ -75,10 +67,8 @@ function AddProduct({ onCancel, onSuccess }) {
     event.preventDefault();
     try {
       await api.post("/pos/products", product);
-      //Router.replace("/Home");
       setNotification("¡Producto creado!", "success");
       setProduct({
-        id: 0,
         name: "",
         description: "",
         barcode: "",
