@@ -20,9 +20,11 @@
     "date-fns": "^2.29.3",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",
+    "formik": "^2.2.9",
     "fs": "*",
     "lint": "^0.8.19",
-    "use-keyboard-shortcut": "^1.1.6"
+    "use-keyboard-shortcut": "^1.1.6",
+    "yup": "^1.1.1"
   },
   "devDependencies": {
     "@emotion/cache": "^11.10.3",

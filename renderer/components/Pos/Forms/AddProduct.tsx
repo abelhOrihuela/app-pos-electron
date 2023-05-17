@@ -1,9 +1,10 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import {
   Button,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -12,10 +13,12 @@ import {
 import { Box } from "@mui/system";
 import { AppContext } from "./../../../context/AuthProvider";
 import { AxiosResponse } from "axios";
-import { AppContextType, IProduct } from "../../../context/Types";
+import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
 import PropTypes from "prop-types";
 import { IResponsePaginated } from "../../../domain/Responses";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
@@ -37,51 +40,37 @@ function AddProduct({ onCancel, onSuccess }) {
     }
   };
 
-  const [product, setProduct] = useState<IProduct>({
-    name: "",
-    description: "",
-    price: null,
-    barcode: "",
-    category: null,
-    unit: "",
-    current_existence: null,
+  const validationSchema = yup.object({
+    barcode: yup.string().required("Código de barras es requerido"),
+    name: yup.string().required("Nombre es requerido"),
+    description: yup.string().required("Descripción es requerida"),
+    unit: yup.string().required("Unidad is required"),
+    category: yup.number().required("Categoria is required"),
+    price: yup.number().required("Precio is required"),
+    current_existence: yup.number().required("Existencia is required"),
   });
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = event.target;
-    let parsedValue: number | string;
-
-    if (type == "number") {
-      parsedValue = Number(value);
-    } else {
-      parsedValue = value;
-    }
-
-    setProduct({
-      ...product,
-      [name]: parsedValue,
-    });
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      await api.post("/pos/products", product);
-      setNotification("¡Producto creado!", "success");
-      setProduct({
-        name: "",
-        description: "",
-        barcode: "",
-        price: null,
-        category: null,
-        unit: "",
-        current_existence: null,
-      });
-      onSuccess();
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      barcode: "",
+      name: "",
+      description: "",
+      unit: "",
+      category: null,
+      price: null,
+      current_existence: null,
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await api.post("/pos/products", values);
+        setNotification("¡Producto creado!", "success");
+        onSuccess();
+      } catch (error) {
+        setNotification(error.message, "error");
+      }
+    },
+  });
 
   return (
     <React.Fragment>
@@ -89,7 +78,12 @@ function AddProduct({ onCancel, onSuccess }) {
         Agregar producto
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        onSubmit={formik.handleSubmit}
+        noValidate
+        sx={{ mt: 1 }}
+      >
         <FormControl fullWidth>
           <TextField
             required
@@ -100,8 +94,9 @@ function AddProduct({ onCancel, onSuccess }) {
             label="Código de barras"
             fullWidth
             autoComplete="barcode"
-            onChange={handleChange}
-            value={product?.barcode}
+            value={formik.values.barcode}
+            onChange={formik.handleChange}
+            error={formik.touched.barcode && Boolean(formik.errors.barcode)}
           />
         </FormControl>
 
@@ -113,8 +108,9 @@ function AddProduct({ onCancel, onSuccess }) {
             id="name"
             name="name"
             label="Nombre"
-            onChange={handleChange}
-            value={product?.name}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
             fullWidth
             autoComplete="given-name"
           />
@@ -128,8 +124,11 @@ function AddProduct({ onCancel, onSuccess }) {
             name="description"
             label="Description"
             size="small"
-            onChange={handleChange}
-            value={product?.description}
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
             fullWidth
             autoComplete="description"
           />
@@ -142,18 +141,23 @@ function AddProduct({ onCancel, onSuccess }) {
           }}
         >
           <FormControl fullWidth>
-            <InputLabel size="small" id="demo-simple-select-label">
+            <InputLabel
+              error={formik.touched.unit && Boolean(formik.errors.unit)}
+              size="small"
+              id="demo-simple-select-label"
+            >
               Unidad *
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={product.unit}
-              label="Categoria"
+              label="Unidad"
               fullWidth
               size="small"
               name="unit"
-              onChange={handleChange}
+              value={formik.values.unit}
+              onChange={formik.handleChange}
+              error={formik.touched.unit && Boolean(formik.errors.unit)}
             >
               <MenuItem value={"PZA"}>Pieza</MenuItem>
               <MenuItem value={"KG"}>Kilogramo</MenuItem>
@@ -169,18 +173,23 @@ function AddProduct({ onCancel, onSuccess }) {
           }}
         >
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label" size="small">
+            <InputLabel
+              error={formik.touched.category && Boolean(formik.errors.category)}
+              id="demo-simple-select-label"
+              size="small"
+            >
               Categoria *
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={product.category}
               size="small"
               label="Categoria"
               fullWidth
               name="category"
-              onChange={handleChange}
+              value={formik.values.category}
+              onChange={formik.handleChange}
+              error={formik.touched.category && Boolean(formik.errors.category)}
             >
               {categories.map((category, index) => (
                 <MenuItem key={index} value={category.id}>
@@ -199,8 +208,9 @@ function AddProduct({ onCancel, onSuccess }) {
             id="price"
             name="price"
             label="Precio"
-            onChange={handleChange}
-            value={product?.price}
+            value={formik.values.price}
+            onChange={formik.handleChange}
+            error={formik.touched.price && Boolean(formik.errors.price)}
             type="number"
             fullWidth
             autoComplete="price"
@@ -215,13 +225,21 @@ function AddProduct({ onCancel, onSuccess }) {
             name="current_existence"
             label="Existencia"
             size="small"
-            onChange={handleChange}
-            value={product?.current_existence}
+            value={formik.values.current_existence}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.current_existence &&
+              Boolean(formik.errors.current_existence)
+            }
             type="number"
             fullWidth
             autoComplete="current_existence"
           />
         </FormControl>
+
+        {Object.keys(formik.errors).length > 0 && (
+          <FormHelperText error>* Campos requeridos</FormHelperText>
+        )}
 
         <Box
           sx={{
@@ -232,7 +250,6 @@ function AddProduct({ onCancel, onSuccess }) {
             <Button type="submit" variant="contained">
               Ingresar
             </Button>
-
             <Button
               type="button"
               onClick={onCancel}

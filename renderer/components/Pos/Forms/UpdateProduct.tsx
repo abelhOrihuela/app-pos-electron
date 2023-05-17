@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -6,17 +6,20 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
   Stack,
 } from "@mui/material";
 import api from "../../../lib/api";
-import { AppContextType, IProduct } from "../../../context/Types";
+import { AppContextType } from "../../../context/Types";
 import { AppContext } from "../../../context/AuthProvider";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import { IResponsePaginated } from "../../../domain/Responses";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 function UpdateProduct({ data, onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
@@ -40,70 +43,45 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
     }
   };
 
-  const [product, setProduct] = useState<IProduct>({
-    name: "",
-    description: "",
-    id: 0,
-    price: 0,
-    barcode: "",
-    category: 0,
-    unit: "",
-    current_existence: null,
+  const validationSchema = yup.object({
+    barcode: yup.string().required("Código de barras es requerido"),
+    name: yup.string().required("Nombre es requerido"),
+    description: yup.string().required("Descripción es requerida"),
+    unit: yup.string().required("Unidad is required"),
+    category: yup.number().required("Categoria is required"),
+    price: yup.number().required("Precio is required"),
+    current_existence: yup.number().required("Existencia is required"),
   });
 
-  useEffect(() => {
-    setProduct({
+  const formik = useFormik({
+    initialValues: {
       name: data.name,
       description: data.description,
       barcode: data.barcode,
       unit: data.unit,
       category: data.category_id,
-      current_existence:
-        data.current_existence >= 0 ? data.current_existence : null,
+      current_existence: data.current_existence,
       price: data.price,
-    });
-  }, []);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = event.target;
-    let parsedValue: any;
-
-    if (type == "number") {
-      parsedValue = Number(value);
-    } else {
-      parsedValue = value;
-    }
-
-    setProduct({
-      ...product,
-      [name]: parsedValue,
-    });
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      await api.update(`/pos/products/${data.uuid}`, product);
-      //Router.replace("/Home");
-      setNotification("¡Información actualizada!", "success");
-      setProduct({
-        name: "",
-        description: "",
-        id: 0,
-        price: 0,
-        barcode: "",
-        category: 0,
-        unit: "",
-        current_existence: 0,
-      });
-      onSuccess();
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await api.update(`/pos/products/${data.uuid}`, values);
+        setNotification("¡Información actualizada!", "success");
+        onSuccess();
+      } catch (error) {
+        setNotification(error.message, "error");
+      }
+    },
+  });
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1 }}
+    >
       <Typography variant="h6" gutterBottom>
         Detall de usuario
       </Typography>
@@ -112,40 +90,47 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
           <TextField
             required
             margin="normal"
-            id="name"
+            id="barcode"
             size="small"
-            name="name"
+            name="barcode"
             label="Código de barras"
             fullWidth
-            autoComplete="name"
-            onChange={handleChange}
-            value={product?.barcode}
+            autoComplete="barcode"
+            value={formik.values.barcode}
+            onChange={formik.handleChange}
+            error={formik.touched.barcode && Boolean(formik.errors.barcode)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
             margin="normal"
-            id="name"
             size="small"
+            required
+            id="name"
             name="name"
             label="Nombre"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
             fullWidth
-            onChange={handleChange}
-            value={product?.name}
+            autoComplete="given-name"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            margin="normal"
-            size="small"
             required
+            margin="normal"
             id="description"
             name="description"
-            label="Descripción"
-            onChange={handleChange}
-            value={product?.description}
+            label="Description"
+            size="small"
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
             fullWidth
+            autoComplete="description"
           />
         </Grid>
 
@@ -163,12 +148,13 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={product.unit}
-                label="Categoria"
+                label="Unidad"
                 fullWidth
                 size="small"
                 name="unit"
-                onChange={handleChange}
+                value={formik.values.unit}
+                onChange={formik.handleChange}
+                error={formik.touched.unit && Boolean(formik.errors.unit)}
               >
                 <MenuItem value={"PZA"}>Pieza</MenuItem>
                 <MenuItem value={"KG"}>Kilogramo</MenuItem>
@@ -192,12 +178,15 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={product.category}
                 size="small"
                 label="Categoria"
                 fullWidth
                 name="category"
-                onChange={handleChange}
+                value={formik.values.category}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.category && Boolean(formik.errors.category)
+                }
               >
                 {categories.map((category, index) => (
                   <MenuItem key={index} value={category.id}>
@@ -217,8 +206,9 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
             id="price"
             name="price"
             label="Precio"
-            onChange={handleChange}
-            value={product?.price}
+            value={formik.values.price}
+            onChange={formik.handleChange}
+            error={formik.touched.price && Boolean(formik.errors.price)}
             type="number"
             fullWidth
             autoComplete="price"
@@ -234,14 +224,20 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
           name="current_existence"
           label="Existencia"
           size="small"
-          onChange={handleChange}
-          value={product?.current_existence}
+          value={formik.values.current_existence}
+          onChange={formik.handleChange}
+          error={
+            formik.touched.current_existence &&
+            Boolean(formik.errors.current_existence)
+          }
           type="number"
           fullWidth
           autoComplete="current_existence"
         />
       </Grid>
-
+      {Object.keys(formik.errors).length > 0 && (
+        <FormHelperText error>* Campos requeridos</FormHelperText>
+      )}
       <Box
         sx={{
           marginTop: "16px",
