@@ -62,7 +62,8 @@ const AppProvider = ({ children }) => {
   const getCurrentUser = async () => {
     try {
       const { data }: AxiosResponse<CurrentUserResponse> = await api.get(
-        "/pos/me"
+        "/pos/me",
+        null
       );
       setUserData(data as IUser);
     } catch (error) {

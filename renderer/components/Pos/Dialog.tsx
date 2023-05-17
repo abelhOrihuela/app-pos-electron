@@ -1,5 +1,4 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -9,19 +8,18 @@ import ListItemText from "@mui/material/ListItemText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 import { blue } from "@mui/material/colors";
 import { IProductResponse } from "../../domain/Responses";
 
-export interface SimpleDialogProps {
+export interface ResulItemsSearch {
   open: boolean;
   selectedValue: IProductResponse;
   onClose: (value: IProductResponse) => void;
   items: IProductResponse[];
 }
 
-function SimpleDialog(props: SimpleDialogProps) {
+function SimpleDialog(props: ResulItemsSearch) {
   const { onClose, selectedValue, open, items } = props;
 
   const handleClose = () => {

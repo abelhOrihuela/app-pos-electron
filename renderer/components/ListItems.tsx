@@ -7,8 +7,8 @@ import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 import { Button, TableContainer } from "@mui/material";
 import Cancel from "@mui/icons-material/Cancel";
-
-export default function ListItems({ items, removeItem }) {
+import PropTypes from "prop-types";
+function ListItems({ items, removeItem }) {
   return (
     <React.Fragment>
       <Title>Items</Title>
@@ -44,3 +44,10 @@ export default function ListItems({ items, removeItem }) {
     </React.Fragment>
   );
 }
+
+export default ListItems;
+
+ListItems.propTypes = {
+  items: PropTypes.array,
+  removeItem: PropTypes.func,
+};

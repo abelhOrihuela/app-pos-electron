@@ -9,19 +9,20 @@ import {
   OutlinedInput,
 } from "@mui/material";
 
-import { AppContextType, ResponsePaginated } from "../context/Types";
+import { AppContextType } from "../context/Types";
 import { AppContext } from "../context/AuthProvider";
 import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
+import { IResponsePaginated } from "../domain/Responses";
 
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
   align?: "right";
-  formatValue?: (value: string) => string;
+  formatValue?: (value: string | number) => string;
 }
 
 const columns: Column[] = [
@@ -57,8 +58,8 @@ function TableCategories({ reload }) {
 
   const [search, setSearch] = useState("");
 
-  const onChange = (e) => {
-    setSearch(e.target.value);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -84,8 +85,9 @@ function TableCategories({ reload }) {
     }
 
     try {
-      const { data }: AxiosResponse<ResponsePaginated> = await api.get(
-        `/pos/categories?page=${page}&size=${rowsPerPage}${filters}`
+      const { data }: AxiosResponse<IResponsePaginated> = await api.get(
+        `/pos/categories?page=${page}&size=${rowsPerPage}${filters}`,
+        null
       );
 
       setItems(data.items);
@@ -113,7 +115,6 @@ function TableCategories({ reload }) {
         variant="outlined"
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
       >
-        {" "}
         <form onSubmit={handleSubmit}>
           <FormControl variant="outlined" fullWidth>
             <InputLabel htmlFor="outlined-adornment-password">
