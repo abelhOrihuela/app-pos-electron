@@ -9,13 +9,14 @@ import {
   OutlinedInput,
 } from "@mui/material";
 
-import { AppContextType } from "../context/Types";
+import { AppContextType, ICategory } from "../context/Types";
 import { AppContext } from "../context/AuthProvider";
 import api from "../lib/api";
 import TableComponent from "./Pos/TableComponent";
 import { AxiosResponse } from "axios";
 import PropTypes from "prop-types";
 import { IResponsePaginated } from "../domain/Responses";
+import UpdateCategory from "./Pos/Forms/UpdateCategory";
 
 interface Column {
   id: string;
@@ -55,6 +56,7 @@ function TableCategories({ reload }) {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const { setNotification } = useContext(AppContext) as AppContextType;
+  const [item, setItem] = useState(null);
 
   const [search, setSearch] = useState("");
 
@@ -109,44 +111,66 @@ function TableCategories({ reload }) {
     setPage(0);
   };
 
+  const handleSelectItem = (item: ICategory) => {
+    setItem(item);
+  };
+
+  const onCancelDetail = () => {
+    setItem(null);
+  };
+
+  const onSuccessDetail = () => {
+    setItem(null);
+    getProducts();
+  };
+
   return (
-    <React.Fragment>
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-      >
-        <form onSubmit={handleSubmit}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel htmlFor="outlined-adornment-password">
-              Buscar...
-            </InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type="text"
-              onChange={onChange}
-              value={search}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                  ></IconButton>
-                </InputAdornment>
-              }
-              label="Buscar..."
-            />
-          </FormControl>
-        </form>
-        <TableComponent
-          page={page}
-          columns={columns}
-          items={items}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
+    <Paper
+      variant="outlined"
+      sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+    >
+      {item ? (
+        <UpdateCategory
+          data={item}
+          onCancel={onCancelDetail}
+          onSuccess={onSuccessDetail}
         />
-      </Paper>
-    </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <form onSubmit={handleSubmit}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel htmlFor="outlined-adornment-password">
+                Buscar...
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type="text"
+                onChange={onChange}
+                value={search}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      edge="end"
+                    ></IconButton>
+                  </InputAdornment>
+                }
+                label="Buscar..."
+              />
+            </FormControl>
+          </form>
+          <TableComponent
+            page={page}
+            columns={columns}
+            items={items}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            handleSelectItem={handleSelectItem}
+          />
+        </React.Fragment>
+      )}
+    </Paper>
   );
 }
 

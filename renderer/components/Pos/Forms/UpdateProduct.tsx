@@ -99,6 +99,7 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
             value={formik.values.barcode}
             onChange={formik.handleChange}
             error={formik.touched.barcode && Boolean(formik.errors.barcode)}
+            helperText={formik.touched.barcode && formik.errors.barcode}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -112,6 +113,7 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
             value={formik.values.name}
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
             fullWidth
             autoComplete="given-name"
           />
@@ -129,6 +131,7 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
             error={
               formik.touched.description && Boolean(formik.errors.description)
             }
+            helperText={formik.touched.description && formik.errors.description}
             fullWidth
             autoComplete="description"
           />
@@ -160,6 +163,9 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
                 <MenuItem value={"KG"}>Kilogramo</MenuItem>
                 <MenuItem value={"CJA"}>Caja</MenuItem>
               </Select>
+              {formik.touched.unit && formik.errors.unit && (
+                <FormHelperText error>{formik.errors.unit}</FormHelperText>
+              )}
             </FormControl>
           </Box>
         </Grid>
@@ -194,6 +200,9 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
                   </MenuItem>
                 ))}
               </Select>
+              {formik.touched.category && formik.errors.category && (
+                <FormHelperText error>{formik.errors.category}</FormHelperText>
+              )}
             </FormControl>
           </Box>
         </Grid>
@@ -209,6 +218,7 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
             value={formik.values.price}
             onChange={formik.handleChange}
             error={formik.touched.price && Boolean(formik.errors.price)}
+            helperText={formik.touched.price && formik.errors.price}
             type="number"
             fullWidth
             autoComplete="price"
@@ -233,11 +243,12 @@ function UpdateProduct({ data, onCancel, onSuccess }) {
           type="number"
           fullWidth
           autoComplete="current_existence"
+          helperText={
+            formik.touched.current_existence && formik.errors.current_existence
+          }
         />
       </Grid>
-      {Object.keys(formik.errors).length > 0 && (
-        <FormHelperText error>* Campos requeridos</FormHelperText>
-      )}
+
       <Box
         sx={{
           marginTop: "16px",

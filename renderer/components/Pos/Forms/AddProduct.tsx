@@ -11,11 +11,11 @@ import {
   Stack,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import PropTypes from "prop-types";
 import { AppContext } from "./../../../context/AuthProvider";
 import { AxiosResponse } from "axios";
 import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
-import PropTypes from "prop-types";
 import { IResponsePaginated } from "../../../domain/Responses";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -56,9 +56,9 @@ function AddProduct({ onCancel, onSuccess }) {
       name: "",
       description: "",
       unit: "",
-      category: null,
-      price: null,
-      current_existence: null,
+      category: "",
+      price: "",
+      current_existence: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -97,6 +97,7 @@ function AddProduct({ onCancel, onSuccess }) {
             value={formik.values.barcode}
             onChange={formik.handleChange}
             error={formik.touched.barcode && Boolean(formik.errors.barcode)}
+            helperText={formik.touched.barcode && formik.errors.barcode}
           />
         </FormControl>
 
@@ -111,6 +112,7 @@ function AddProduct({ onCancel, onSuccess }) {
             value={formik.values.name}
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
             fullWidth
             autoComplete="given-name"
           />
@@ -131,6 +133,7 @@ function AddProduct({ onCancel, onSuccess }) {
             }
             fullWidth
             autoComplete="description"
+            helperText={formik.touched.description && formik.errors.description}
           />
         </FormControl>
 
@@ -163,6 +166,9 @@ function AddProduct({ onCancel, onSuccess }) {
               <MenuItem value={"KG"}>Kilogramo</MenuItem>
               <MenuItem value={"CJA"}>Caja</MenuItem>
             </Select>
+            {formik.touched.unit && formik.errors.unit && (
+              <FormHelperText error>{formik.errors.unit}</FormHelperText>
+            )}
           </FormControl>
         </Box>
 
@@ -197,6 +203,9 @@ function AddProduct({ onCancel, onSuccess }) {
                 </MenuItem>
               ))}
             </Select>
+            {formik.touched.category && formik.errors.category && (
+              <FormHelperText error>{formik.errors.category}</FormHelperText>
+            )}
           </FormControl>
         </Box>
 
@@ -214,6 +223,7 @@ function AddProduct({ onCancel, onSuccess }) {
             type="number"
             fullWidth
             autoComplete="price"
+            helperText={formik.touched.price && formik.errors.price}
           />
         </FormControl>
 
@@ -234,12 +244,12 @@ function AddProduct({ onCancel, onSuccess }) {
             type="number"
             fullWidth
             autoComplete="current_existence"
+            helperText={
+              formik.touched.current_existence &&
+              formik.errors.current_existence
+            }
           />
         </FormControl>
-
-        {Object.keys(formik.errors).length > 0 && (
-          <FormHelperText error>* Campos requeridos</FormHelperText>
-        )}
 
         <Box
           sx={{
@@ -248,7 +258,7 @@ function AddProduct({ onCancel, onSuccess }) {
         >
           <Stack direction="row" spacing={2}>
             <Button type="submit" variant="contained">
-              Ingresar
+              Guardar
             </Button>
             <Button
               type="button"

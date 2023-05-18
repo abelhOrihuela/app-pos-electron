@@ -1,9 +1,10 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import {
   Button,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -15,42 +16,40 @@ import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
 
 import PropTypes from "prop-types";
-import { ICreateUserForm } from "../../../domain/Forms";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 function AddProduct({ onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
 
-  const [user, setUser] = useState<ICreateUserForm>({
-    email: "",
-    username: "",
-    password: "",
-    role: "",
+  const validationSchema = yup.object({
+    email: yup.string().email().required("Correo electrónico requerido"),
+    username: yup.string().required("Nombre es requerido"),
+    role: yup.string().required("Rol es requerido"),
+    password: yup
+      .string()
+      .test("len", "Longitud minima requerida 8", (val) => val.length >= 8)
+      .required("Password is required"),
   });
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      await api.post("/pos/users", user);
-      setNotification("Usuario creado!", "success");
-      setUser({
-        email: "",
-        username: "",
-        password: "",
-        role: "",
-      });
-      onSuccess();
-    } catch (error) {
-      setNotification(error.message, "error");
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      username: "",
+      role: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await api.post("/pos/users", values);
+        setNotification("Usuario creado!", "success");
+        onSuccess();
+      } catch (error) {
+        setNotification(error.message, "error");
+      }
+    },
+  });
 
   return (
     <React.Fragment>
@@ -58,7 +57,12 @@ function AddProduct({ onCancel, onSuccess }) {
         Agregar usuario
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        onSubmit={formik.handleSubmit}
+        noValidate
+        sx={{ mt: 1 }}
+      >
         <FormControl fullWidth>
           <TextField
             required
@@ -67,10 +71,12 @@ function AddProduct({ onCancel, onSuccess }) {
             size="small"
             name="email"
             label="Correo electrónico"
+            helperText={formik.touched.email && formik.errors.email}
             fullWidth
             autoComplete="email"
-            onChange={handleChange}
-            value={user?.email}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            error={formik.touched.email && Boolean(formik.errors.email)}
           />
         </FormControl>
 
@@ -82,10 +88,12 @@ function AddProduct({ onCancel, onSuccess }) {
             id="username"
             name="username"
             label="Nombre de usuario"
-            onChange={handleChange}
-            value={user?.username}
+            helperText={formik.touched.username && formik.errors.username}
             fullWidth
             autoComplete="given-name"
+            value={formik.values.username}
+            onChange={formik.handleChange}
+            error={formik.touched.username && Boolean(formik.errors.username)}
           />
         </FormControl>
 
@@ -96,22 +104,30 @@ function AddProduct({ onCancel, onSuccess }) {
           }}
         >
           <FormControl fullWidth>
-            <InputLabel size="small" id="demo-simple-select-label">
+            <InputLabel
+              size="small"
+              id="demo-simple-select-label"
+              error={formik.touched.role && Boolean(formik.errors.role)}
+            >
               Role *
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={user.role}
               label="Rol"
               fullWidth
               size="small"
               name="role"
-              onChange={handleChange}
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              error={formik.touched.role && Boolean(formik.errors.role)}
             >
               <MenuItem value={"admin"}>Administrador</MenuItem>
               <MenuItem value={"cashier"}>Cajero</MenuItem>
             </Select>
+            {formik.touched.role && Boolean(formik.errors.role) && (
+              <FormHelperText error>{formik.errors.role}</FormHelperText>
+            )}
           </FormControl>
         </Box>
 
@@ -123,11 +139,13 @@ function AddProduct({ onCancel, onSuccess }) {
             id="password"
             name="password"
             label="Password"
-            onChange={handleChange}
-            value={user?.password}
-            type="text"
+            type="password"
             fullWidth
             autoComplete="price"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
           />
         </FormControl>
 
@@ -138,7 +156,7 @@ function AddProduct({ onCancel, onSuccess }) {
         >
           <Stack direction="row" spacing={2}>
             <Button type="submit" variant="contained">
-              Ingresar
+              Guardar
             </Button>
 
             <Button

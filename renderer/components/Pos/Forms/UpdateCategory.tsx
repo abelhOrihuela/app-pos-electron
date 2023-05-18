@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import { Button, FormControl, FormHelperText, Stack } from "@mui/material";
+import { Button, FormHelperText, Grid, Stack } from "@mui/material";
 import { Box } from "@mui/system";
-import { AppContext } from "./../../../context/AuthProvider";
+import { AppContext } from "../../../context/AuthProvider";
 import { AppContextType } from "../../../context/Types";
 import api from "../../../lib/api";
 import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as yup from "yup";
-function AddCategory({ onCancel, onSuccess }) {
+function UpdateCategory({ data, onCancel, onSuccess }) {
   const { setNotification } = useContext(AppContext) as AppContextType;
 
   const validationSchema = yup.object({
@@ -19,14 +19,14 @@ function AddCategory({ onCancel, onSuccess }) {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      description: "",
+      name: data.name,
+      description: data.description,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        await api.post("/pos/categories", values);
-        setNotification("¡Categoria creada!", "success");
+        await api.update(`/pos/categories/${data.uuid}`, values);
+        setNotification("¡Categoria actualizada!", "success");
         onSuccess();
       } catch (error) {
         setNotification(error.message, "error");
@@ -35,18 +35,18 @@ function AddCategory({ onCancel, onSuccess }) {
   });
 
   return (
-    <React.Fragment>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1 }}
+    >
       <Typography variant="h6" gutterBottom>
-        Agregar categoria
+        Detall de categoria
       </Typography>
 
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{ mt: 1 }}
-      >
-        <FormControl fullWidth>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
           <TextField
             margin="normal"
             size="small"
@@ -61,9 +61,8 @@ function AddCategory({ onCancel, onSuccess }) {
             fullWidth
             autoComplete="given-name"
           />
-        </FormControl>
-
-        <FormControl fullWidth>
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <TextField
             required
             margin="normal"
@@ -80,36 +79,37 @@ function AddCategory({ onCancel, onSuccess }) {
             fullWidth
             autoComplete="description"
           />
-        </FormControl>
+        </Grid>
+      </Grid>
 
-        <Box
-          sx={{
-            marginTop: "16px",
-          }}
-        >
-          <Stack direction="row" spacing={2}>
-            <Button type="submit" variant="contained">
-              Guardar
-            </Button>
+      <Box
+        sx={{
+          marginTop: "16px",
+        }}
+      >
+        <Stack direction="row" spacing={2}>
+          <Button type="submit" variant="contained">
+            Actualizar
+          </Button>
 
-            <Button
-              type="button"
-              onClick={onCancel}
-              variant="contained"
-              color="error"
-            >
-              Cancelar
-            </Button>
-          </Stack>
-        </Box>
+          <Button
+            type="button"
+            onClick={onCancel}
+            variant="contained"
+            color="error"
+          >
+            Cancelar
+          </Button>
+        </Stack>
       </Box>
-    </React.Fragment>
+    </Box>
   );
 }
 
-export default AddCategory;
+export default UpdateCategory;
 
-AddCategory.propTypes = {
+UpdateCategory.propTypes = {
   onCancel: PropTypes.func,
   onSuccess: PropTypes.func,
+  data: PropTypes.object,
 };
